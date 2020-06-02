@@ -35,6 +35,7 @@ function calcShipInfo(type, count) {
     if (id === 'undefined') return false;
     let stats = {base_stats: {speed: "", fp: "", hp: "", cargo: "", scan: "", bombing: ""}, costs: {labor_cost: "", metal: "", gas: "", crystal: "", minutes: ""}, level_bonus: shipData[id].level_bonus}
     
+    stats.base_stats.speed = parseInt(shipData[id].base_stats.speed) * count;
     stats.base_stats.fp = parseInt(shipData[id].base_stats.fp, 10) * count;
     stats.base_stats.hp = parseInt(shipData[id].base_stats.hp, 10) * count;
     stats.base_stats.cargo = parseInt(shipData[id].base_stats.cargo, 10) * count;
@@ -129,7 +130,7 @@ function getStationInformation(reportString) {
         //Cards
         station.cards = ['N/A'];
         regex.cards = new RegExp('(?<=Cards: \\n)[^\\r\\n\\t\\f\\v\\.]*');
-        regex.card_names = new RegExp('cardTooltip\\(\\d*\\)[A-Za-z0-9 ]*', 'gm');
+        regex.card_names = new RegExp("cardTooltip\\(\\d*\\)[A-Za-z0-9\\ \\'\\-]*", 'gm');
         match = reportString.match(regex.cards);
         if (match != null && match[0] != undefined) {
             station.cards = [];
