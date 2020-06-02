@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starborne - Spy Report Converter Bot</title>
+
+    <link rel="shortcut icon" href="./starborne-spyreport.ico" type="image/x-icon">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="spyreport.css">
+    <script src="spyreports.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-135891956-1"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-135891956-1');
+    </script>
+</head>
+<body>
+    <div id="wrapper" class="front">
+        <div id="error" class="invis">
+            <h2>NO CONNECTION TO THE SERVER PLEASE RELOAD</h2>
+        </div>
+        <h1>Starborne Spy Report Converter Bot</h1>
+        <hr>
+        <div id="front" class="disp">
+            <h2 class="center pointer slow-blink" onclick="toggle_install()" id="install-btn">>>> <b>INSTALLATION</b> <<<</h2>
+
+            <ol class="left invis" id="install-text">
+                <li><a href="https://discordapp.com/oauth2/authorize?client_id=713078504706539520&scope=bot&permissions=388096&redirect_uri=https%3A%2F%2Fnohobbysfound.net%2Frandom%2Fspyreports">INVITE</a> the Discord Bot</li>
+                <li>Make a discord channel with either spy-data or spy-report in its name</li>
+            </ol>
+
+            <hr>
+
+            <h2 class="center pointer slow-blink" onclick="toggle_use()" id="use-btn">>>> <b>USAGE</b> <<<</h2>
+
+            <ol class="left invis" id="use-text">
+                <li><b>Copy</b> your spy report from in game, then <b>paste</b> it into the box below</li>
+                <li>It will generate and <b>automatically copy</b> your report code. Go to your <b>spy-report</b> channel, <b>paste</b> (Ctrl-V) in there, hit enter. Voila!</li>
+            </ol>
+
+            <hr>
+
+            <h2 class="center pointer slow-blink" onclick="toggle_commands()" id="command-btn">>>> <b>COMMANDS</b> <<<</h2>
+
+            <ul class="left invis" id="command-text">
+                <li><b>Arrival Calculator</b><br>
+                > SP::time [current-time] eta [eta]<br>
+                <i>In a 24h time format and HH:MM:SS format</i>
+                </li>
+            </ul>
+
+            <hr>
+
+            <h2 class="center">PASTING AREA</h2>
+            <div id="textarea">
+                <textarea id="send-data" cols="40" rows="25" disabled></textarea> <br>
+                <input type="button" value="GET CODE" id="send-btn" onclick="send()" class="pointer" disabled>
+            </div>
+
+            <br>
+
+            <!-- FOOTER -->
+            <p class="center">This Bot was made by <a href="https://twitch.tv/mrmysterius" target="_blank" class="link-blink">MrMysterius</a><br>
+                With the help of <b>Silinaly</b>, a Starborne Mod and <b>Nokternl</b>, a Starborne <a href="https://www.twitch.tv/nokternl" target="_blank" class="link-blink">Streamer</a> and <a href="https://www.youtube.com/nokternl" target="_blank" class="link-blink">Content Creator</a><br><br>If you want to report a Bug or give Feedback then do it on the <a href="https://forums.starborne.com/t/spy-report-coverter-discord-bot/2093" target="_blank">STARBORNE FORUM POST</a> also News are posted in spy-report-bot-news channel on the <a href="https://nohobbysfound.net" target="_blank">404 No Hobbys Found Discord</a><br>
+
+            <p id="version-btn" class="center pointer" onclick="show_change()">v1.1.4.2</p>
+        </div>
+        <div id="code" class="invis">
+            <h2 id="share-code" class="center pointer" onclick="copy()">- - - - - -</h2>
+
+            <p class="center">The Code got copied to your clipboard, if it didn't work just click on the code again</p>
+
+            <br>
+
+            <input type="button" value="BACK" id="code-back-btn" onclick="back()" class="pointer">
+        </div>
+        <div id="change" class="invis">
+
+            <input type="button" value="BACK" onclick="back()" class="pointer change-back-btn">
+            <div class="cli">
+                <h2>1.1.4.0</h2>
+                <ul>
+                    <li>Reworked the Website</li>
+                    <li>Added this changelog</li>
+                </ul>
+                <p class="timestamp"><i>27. May 2020</i></p>
+                <h2>1.1.4.1</h2>
+                <ul>
+                    <li>Fixed that unkown fleet count would cause embed not be generated properly</li>
+                </ul>
+                <p class="timestamp"><i>27. May 2020</i></p>
+                <h2>1.1.4.2</h2>
+                <ul>
+                    <li>Fixed an Problem Heavy Scouts only being displayed as Heavy. They are now displayed as Recon</li>
+                    <li>Fixed an Problem with Recon Fleets not getting there base stats calculated</li>
+                    <li>Fixed an Problem with Tianchao Reports sometimes missing fleets, because of certain cards in the report</li>
+                </ul>
+                <p class="timestamp"><i>28. May 2020</i></p>
+            </div>
+            <hr>
+
+            <div class="cli">
+                <h2>1.1.3.0</h2>
+                <ul>
+                    <li>Added a command for calculating the time it takes for a fleet to get home</li>
+                </ul>
+                <h2>1.1.3.1</h2>
+                <ul>
+                    <li>Fixed some calculations of the command added</li>
+                    <li>Added Distance in the output</li>
+                </ul>
+                <p class="timestamp"><i>26. May 2020</i></p>
+            </div>
+            <hr>
+
+            <div class="cli">
+                <h2>1.1.2.0</h2>
+                <ul>
+                    <li>Fleet Base Stats get calculated from a Spy Report and displayed</li>
+                    <li>Construction Queues from Tianchao reports are now listed</li>
+                </ul>
+                <p class="timestamp"><i>24. May 2020</i></p>
+            </div>
+            <hr>
+
+            <div class="cli">
+                <h2>1.1.1.0</h2>
+                <ul>
+                    <li>Command added for calculating from current time and eta of a moving fleet the time of arrival at the destination</li>
+                </ul>
+                <p class="timestamp"><i>23. May 2020</i></p>
+            </div>
+            <hr>
+
+            <div class="cli">
+                <h2>1.1.0.0</h2>
+                <ul>
+                    <li>Reworked the way of getting the infromation from Spy Reports to accord for Tianchao reports</li>
+                    <li>Resources get cool icons in embed now</li>
+                    <li>Website created for the Bot with option to create a report code to bypass character limit in Discord</li>
+                </ul>
+                <p class="timestamp"><i>22. May 2020</i></p>
+            </div>
+            <hr>
+
+            <div class="cli">
+                <h2>1.0.0.0</h2>
+                <ul>
+                    <li>Created the first version that converted data on a basic level</li>
+                </ul>
+                <p class="timestamp"><i>22. May 2020</i></p>
+            </div>
+            <hr>
+        </div>
+    </div>
+</body>
+</html>

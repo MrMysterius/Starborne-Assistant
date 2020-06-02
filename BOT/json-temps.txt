@@ -1,0 +1,9 @@
+{
+        "name": "",
+        "effects": {
+            "fp": "",
+            "fp_type": "",
+            "hp": "",
+            "hp_type": ""
+        }
+    },

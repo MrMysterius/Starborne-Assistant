@@ -1,0 +1,5 @@
+(?<=Station Hidden Resources.\n)[\n\s\S\r]*(?=Station Hidden Resources:)
+
+(?<=Hidden Resources: )[^\r\n\t\f\v]*
+
+(?<=hex \()[^\r\n\t\f\v]*(?=\d*\))

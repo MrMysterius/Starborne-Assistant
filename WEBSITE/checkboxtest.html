@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crack</title>
+
+    <style>
+        html {
+            background-color: #23272A;
+            color: #ffffff;
+        }
+        input[type="checkbox"] {
+        display:none;
+        }
+        input[type="checkbox"] + label {
+            width: 60px;
+            height: 30px;
+            border-radius: 30px;
+            border: 2px solid #ffffff;
+            background-color: #2C2F33;
+            display: inline-block;
+            content: "";
+            float: left;
+            margin-right: 5px;
+            transition: background-color 0.5s linear;
+            margin-top: 15px;
+        }
+        input[type="checkbox"] + label:hover {
+            cursor: pointer;
+        }
+        input[type="checkbox"] + label::before {
+            width: 30px;
+            height: 30px;
+            border-radius: 30px;
+            background-color: #fff;
+            display: block;
+            content: "";
+            float: left;
+            margin-right: 5px;
+            transition: margin 0.1s linear;
+            box-shadow: 0px 0px 5px #aaa;
+        }
+        input[type="checkbox"]:checked+label{
+            background-color: #4a6af7;
+        }
+        input[type="checkbox"]:checked+label::before {
+            margin: 0 0 0 31px;
+        }
+    </style>
+</head>
+<body>
+    <div for="crack">
+        <input type="checkbox" name="Crack" id="crack">
+        <label for="crack"></label>
+    </div>
+</body>
+</html>
