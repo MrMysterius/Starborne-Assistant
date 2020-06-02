@@ -49,6 +49,10 @@ function calcShipInfo(type, count) {
     return stats;
 }
 
+function calcCardStats(fleet) {
+    
+}
+
 /**
  * 
  * @param {Integer} xa StartingHex X
