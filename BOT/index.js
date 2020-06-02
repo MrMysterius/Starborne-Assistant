@@ -5,6 +5,7 @@ const Bot = new Discord.Client();
 const http = require('http');
 const server = http.createServer(function(request, response) {});
 const shipData = require('./information/ships.json');
+const cardData = require('./information/cards.json');
 
 
 
@@ -49,7 +50,13 @@ function calcShipInfo(type, count) {
     return stats;
 }
 
+/**
+ * Returns Calculations for Cards of a Fleet
+ * @param {Object} fleet Fleet as an object with Cards
+ */
 function calcCardStats(fleet) {
+    if (fleet.cards == null || fleet.cards == undefined) return false;
+
     
 }
 
