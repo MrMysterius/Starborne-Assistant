@@ -6,6 +6,7 @@ const http = require('http');
 const server = http.createServer(function(request, response) {});
 const shipData = require('./information/ships.json');
 const cardData = require('./information/cards.json');
+const lib = require('./lib');
 
 
 
