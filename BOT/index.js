@@ -1016,11 +1016,24 @@ Bot.on("guildDelete", (guild) => {
     console.log(`- ${guild.name} - ${guild.owner.user.username}#${guild.owner.user.discriminator}`);
 })
 
+var oldInterval = -1;
+
 Bot.on("ready", () => {
-    console.log(`BOT CONNECTED TO`);
+    console.log(`BOT CONNECTED TO...`);
     Bot.guilds.cache.forEach((guild) => {
         console.log(`> ${guild.name} | ${guild.owner.user.username}#${guild.owner.user.discriminator}`);
     })
+    Bot.user.setPresence({activity: {name: "BOOTING UP | CONNECTING"}, status: "idle"});
+    if (oldInterval != -1) {
+        clearInterval(oldInterval)
+    }
+    oldInterval = setInterval(()=>{
+        var counter = 0;
+        Bot.guilds.cache.forEach((guild) => {
+            counter++;
+        })
+        Bot.user.setPresence({activity: {name: `${config.prefix}help | ${counter} Guilds`}, status: "online"});
+    },60000);
 })
 
 
