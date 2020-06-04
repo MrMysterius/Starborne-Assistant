@@ -5,6 +5,7 @@ const Bot = new Discord.Client();
 const http = require('http');
 const server = http.createServer(function(request, response) {});
 const shipData = require('./information/ships.json');
+const cardData = require('./information/cards.json');
 
 
 
@@ -34,6 +35,7 @@ function calcShipInfo(type, count) {
     if (id === 'undefined') return false;
     let stats = {base_stats: {speed: "", fp: "", hp: "", cargo: "", scan: "", bombing: ""}, costs: {labor_cost: "", metal: "", gas: "", crystal: "", minutes: ""}, level_bonus: shipData[id].level_bonus}
     
+    stats.base_stats.speed = parseInt(shipData[id].base_stats.speed) * count;
     stats.base_stats.fp = parseInt(shipData[id].base_stats.fp, 10) * count;
     stats.base_stats.hp = parseInt(shipData[id].base_stats.hp, 10) * count;
     stats.base_stats.cargo = parseInt(shipData[id].base_stats.cargo, 10) * count;
@@ -47,6 +49,28 @@ function calcShipInfo(type, count) {
     stats.costs.minutes = parseInt(shipData[id].costs.minutes, 10) * count;
 
     return stats;
+}
+
+/**
+ * Returns Calculations for Cards of a Fleet
+ * @param {String} cardName Card Name
+ * @param 
+ */
+function getCardStats(cardName) {
+    if (cardName == null || cardName == undefined) return -1;
+
+    var id = -1;
+    for (var k=0; k<cardData.length; k++) {
+        if (cardData[k].name === cardName) {
+            id = k;
+        }
+    }
+
+    if (id === -1) {
+        return -1;
+    } else {
+        return cardData[id];
+    }
 }
 
 /**
@@ -118,7 +142,7 @@ function getStationInformation(reportString) {
         //Cards
         station.cards = ['N/A'];
         regex.cards = new RegExp('(?<=Cards: \\n)[^\\r\\n\\t\\f\\v\\.]*');
-        regex.card_names = new RegExp('cardTooltip\\(\\d*\\)[A-Za-z0-9 ]*', 'gm');
+        regex.card_names = new RegExp("cardTooltip\\(\\d*\\)[A-Za-z0-9\\ \\'\\-]*", 'gm');
         match = reportString.match(regex.cards);
         if (match != null && match[0] != undefined) {
             station.cards = [];
@@ -342,6 +366,19 @@ function getStationInformation(reportString) {
                     station.fleet_cargo += parseInt(temp.base_stats.cargo, 10);
                     station.fleet_bombing += parseInt(temp.base_stats.bombing, 10);
                     station.fleet_labor += parseInt(temp.costs.labor_cost, 10);
+                }
+            }
+        }
+        if (station.cards != null && station.cards != 'N/A') {
+            for (var i=0; i<station.fleets.length; i++) {
+                if (station.fleets[i].cards != null && station.fleets[i].cards != undefined) {
+                    for (var k=0; k<station.fleets[i].cards.length; k++) {
+                        let cardStats = getCardStats(station.fleets[i].cards[k].name)
+
+                        if (cardStats !== -1) {
+                            station.fleets[i].cards[k] = cardStats;
+                        }
+                    }
                 }
             }
         }
@@ -620,188 +657,352 @@ Bot.on("message", (msg) => {
     let command = args.splice(0,1).toString().toLowerCase();
 
     switch (command) {
-        case 'time':
-            if (args != null && args[0] != undefined && args[1] != undefined && args[1] === 'eta' && args[2] != undefined) {
+        case 'travel':
 
-                let current_time = args[0].split(':');
-                let eta = args[2].split(':');
+            //REGEX DECLARATION
+            let rgxSHex = new RegExp('(?<=-startHex )[0-9\\-\\,]*');
+            let rgxEHex = new RegExp('(?<=-endHex )[0-9\\-\\,]*');
+            let rgxSpeed = new RegExp('(?<=-speed )[0-9\\.]*');
+            let rgxTime = new RegExp('(?<=-time )[0-9\\:]*');
+            let rgxETA = new RegExp('(?<=-eta )[0-9\\:]*');
+            let rgxDistance = new RegExp('(?<=-distance )[0-9\\.]*');
+            let rgxStargate = new RegExp('(?<=-stargate )[0-9\\.]*');
 
-                var arrival = [0,0,0];
-                arrival[0] = parseInt(current_time[0]) + parseInt(eta[0]);
-                arrival[1] = parseInt(current_time[1]) + parseInt(eta[1]);
-                arrival[2] = parseInt(current_time[2]) + parseInt(eta[2]);
+            //REGEX INFO VARIABLE DECLERATION
+            var sHex = -1, eHex = -1, speed = -1, time = -1, eta = -1, distance = -1, stargate = -1;
 
-                if (arrival[2] >= 60) {
-                    arrival[2] -= 60;
-                    arrival[1] += 1;
-                }
-                if (arrival[1] >= 60) {
-                    arrival[1] -= 60;
-                    arrival[0] += 1;
-                }
-                if (arrival[0] >= 24) {
-                    arrival[0] -= 24;
-                }
-
-                if (arrival[0] < 10) arrival[0] = `0${arrival[0]}`;
-                if (arrival[1] < 10) arrival[1] = `0${arrival[1]}`;
-                if (arrival[2] < 10) arrival[2] = `0${arrival[2]}`;
-
-                let embed = new Discord.MessageEmbed();
-                embed.setAuthor(`${msg.author.username}#${msg.author.discriminator}`, msg.author.displayAvatarURL());
-                embed.setColor(0x5cc3ff);
-                embed.setTitle('Arrival Time Calculation');
-                embed.setThumbnail(Bot.user.displayAvatarURL());
-                embed.addField('Current Time', `${current_time[0]}:${current_time[1]}:${current_time[2]}`, true);
-                embed.addField('ETA', `${eta[0]}:${eta[1]}:${eta[2]}`, true);
-                embed.addField('Calculated Arrival', `${arrival[0]}:${arrival[1]}:${arrival[2]}`, false);
-
-                msg.channel.send(embed);
+            //GETTING ALL THE INFOS FROM THE MESSAGE
+            argsFull = args.join(' ');
+            //EITHER DISTANCE OR HEXES
+            var match = argsFull.match(rgxDistance);
+            if (mc(match)) {
+                distance = parseInt(match[0], 10);
             } else {
-                let embed = new Discord.MessageEmbed();
-                embed.setAuthor(`${msg.author.username}#${msg.author.discriminator}`, msg.author.displayAvatarURL());
-                embed.setColor(0xff413b);
-                embed.setThumbnail(Bot.user.displayAvatarURL());
-                embed.setTitle('Arrival Time Calculation');
-                embed.setDescription(`How do you use this command:\n\`${config.prefix}time <current-time> eta <eta>\`\nTime Format has to be:\n\`HH:MM:SS\` and in a 24h time format\nJust use ingame time\nExample:\n\`${config.prefix}time 15:12:54 eta 00:54:54\``);
+                match = argsFull.match(rgxSHex);
+                if (mc(match)) {
+                    sHex = match[0].split(',');
+                    match = argsFull.match(rgxEHex);
+                    if (mc(match)) {
+                        eHex = match[0].split(',');
+                    }
+                }
+            }
+            //SPEED
+            match = argsFull.match(rgxSpeed);
+            if (mc(match)) {
+                speed = parseFloat(match[0]);
+            }
+            //STARGATE
+            match = argsFull.match(rgxStargate);
+            if (mc(match)) {
+                stargate = parseFloat(match[0]);
+            }
+            //TIMES
+            match = argsFull.match(rgxTime);
+            if (mc(match)) {
+                time = match[0].split(':');
+                match = argsFull.match(rgxETA);
+                if (mc(match)) {
+                    eta = match[0].split(':');
+                }
+            }
 
+            //CHECKS AND TRANSFORMS
+            //SPEED
+            if (speed === -1) return;
+
+            //HEXES
+            if ((distance == -1 && sHex == -1 && eHex == -1) || (eHex.length == undefined && sHex.length == undefined && distance == -1) || (sHex.length != 2 && eHex.length != 2 && distance == -1)) return;
+            if (sHex.length === 2 && eHex.length === 2) {
+                sHex[0] = parseInt(sHex[0], 10);
+                sHex[1] = parseInt(sHex[1], 10);
+                eHex[0] = parseInt(eHex[0], 10);
+                eHex[1] = parseInt(eHex[1], 10);
+            }
+
+            //CURRENT TIME
+            var cTime = [0,0,0];
+            if (time != -1) {
+                if (time.length !== 3) {
+                    return;
+                } else if (time.length === 3) {
+                    cTime[0] = (!(time[0]>23)) ? parseInt(time[0], 10) : 0;
+                    cTime[1] = (!(time[1]>59)) ? parseInt(time[1], 10) : 0;
+                    cTime[2] = (!(time[2]>59)) ? parseInt(time[2], 10) : 0;
+                }
+            }
+
+            //ETA
+            var cETA = [0,0,0,0];
+            if (eta != -1) {
+                if (eta.length > 4) {
+                    return;
+                } else if (eta.length === 4) {
+                    cETA[0] = parseInt(eta[0], 10);
+                    cETA[1] = parseInt(eta[1], 10);
+                    cETA[2] = parseInt(eta[2], 10);
+                    cETA[3] = parseInt(eta[3], 10);
+                } else if (eta.length === 3) {
+                    cETA[0] = parseInt(0, 10);
+                    cETA[1] = parseInt(eta[0], 10);
+                    cETA[2] = parseInt(eta[1], 10);
+                    cETA[3] = parseInt(eta[2], 10);
+                } else if (eta.length === 2) {
+                    cETA[0] = parseInt(0, 10);
+                    cETA[1] = parseInt(0, 10);
+                    cETA[2] = parseInt(eta[0], 10);
+                    cETA[3] = parseInt(eta[1], 10);
+                } else if (eta.length === 1) {
+                    cETA[0] = parseInt(0, 10);
+                    cETA[1] = parseInt(0, 10);
+                    cETA[2] = parseInt(0, 10);
+                    cETA[3] = parseInt(eta[0], 10);
+                }
+            }
+
+            //CALCULATIONS OF TRAVEL TIME
+            if (distance === -1) {
+                distance = hexDistance(sHex[0],sHex[1],eHex[0],eHex[1]);
+            }
+            var travel_once = [0,0,0,0,0];
+            var travel_once_stargate = [0,0,0,0,0];
+            var travel_twice = [0,0,0,0,0];
+            if (stargate === -1) {
+                let hex_per_min = 60/(speed/3600);
+                var raw_time = ((distance*hex_per_min)/60).toFixed(3);
+                let days = ~~(raw_time/(24*3600));
+                raw_time %= 24*3600;
+                let hours = ~~(raw_time/3600);
+                raw_time %= 3600;
+                let minutes = ~~(raw_time/60);
+                raw_time %= 60;
+                let seconds = ~~raw_time;
+                raw_time %= 1;
+                let milseconds = Math.floor(raw_time*1000);
+                travel_once = [days, hours, minutes, seconds, milseconds];
+                travel_twice = [days*2, hours*2, minutes*2, seconds*2, milseconds*2];
+            } else if (stargate > 0) {
+                var hex_per_min = 60/(speed/3600);
+                var raw_time = ((distance*hex_per_min)/60).toFixed(3);
+                var days = ~~(raw_time/(24*3600));
+                raw_time %= 24*3600;
+                var hours = ~~(raw_time/3600);
+                raw_time %= 3600;
+                var minutes = ~~(raw_time/60);
+                raw_time %= 60;
+                var seconds = ~~raw_time;
+                raw_time %= 1;
+                var milseconds = Math.floor(raw_time*1000);
+                travel_once = [days, hours, minutes, seconds, milseconds];
+                var hex_per_min = 60/((stargate+speed)/3600);
+                var raw_time = ((distance*hex_per_min)/60).toFixed(3);
+                var days = ~~(raw_time/(24*3600));
+                raw_time %= 24*3600;
+                var hours = ~~(raw_time/3600);
+                raw_time %= 3600;
+                var minutes = ~~(raw_time/60);
+                raw_time %= 60;
+                var seconds = ~~raw_time;
+                raw_time %= 1;
+                var milseconds = Math.floor(raw_time*1000);
+                travel_once_stargate = [days, hours, minutes, seconds, milseconds];
+                travel_twice = [days+travel_once[0], hours+travel_once[1], minutes+travel_once[2], seconds+travel_once[3], milseconds+travel_once[4]];
+            }
+
+            if (travel_twice[4] >= 1000) {
+                travel_twice[3] += 1;
+                travel_twice[4] -= 1000;
+            }
+            if (travel_twice[3] >= 60) {
+                travel_twice[2] += 1;
+                travel_twice[3] -= 60;
+            }
+            if (travel_twice[2] >= 60) {
+                travel_twice[1] += 1;
+                travel_twice[2] -= 60;
+            }
+            if (travel_twice[1] >= 24) {
+                travel_twice[0] += 1;
+                travel_twice[1] -= 24;
+            }
+
+            //EXTRA TIME CALCS
+            var pTime = [0,0,0,0,0];
+            var pHome = [0,0,0,0,0];
+            if (eta != -1 && time != -1) {
+                pTime = [cETA[0], cETA[1], cETA[2], cETA[3], 0];
+                if (stargate === -1) {
+                    pHome = [cETA[0]+travel_once[0], cETA[1]+travel_once[1], cETA[2]+travel_once[2], cETA[3]+travel_once[3], 0+travel_once[4]];
+                } else {
+                    pHome = [cETA[0]+travel_once_stargate[0], cETA[1]+travel_once_stargate[1], cETA[2]+travel_once_stargate[2], cETA[3]+travel_once_stargate[3], 0+travel_once_stargate[4]];
+                }
+
+                do {
+                    if (pHome[4] >= 1000) {
+                        pHome[3] += 1;
+                        pHome[4] -= 1000;
+                    }
+                } while (pHome[4] >= 1000);
+                do {
+                    if (pHome[3] >= 60) {
+                        pHome[2] += 1;
+                        pHome[3] -= 60;
+                    }
+                } while (pHome[3] >= 60);
+                do {
+                    if (pHome[2] >= 60) {
+                        pHome[1] += 1;
+                        pHome[2] -= 60;
+                    }
+                } while (pHome >= 60);
+                do {
+                    if (pHome[1] >= 24) {
+                        pHome[0] += 1;
+                        pHome[1] -= 24;
+                    }
+                } while (pHome >= 24);
+            } else if (time != -1) {
+                pTime = [0+travel_once[0], cTime[0]+travel_once[1], cTime[1]+travel_once[2], cTime[2]+travel_once[3], 0+travel_once[4]];
+                pHome = [0+travel_twice[0], cTime[0]+travel_twice[1], cTime[1]+travel_twice[2], cTime[2]+travel_twice[3], 0+travel_twice[4]];
+                do {
+                    if (pHome[4] >= 1000) {
+                        pHome[3] += 1;
+                        pHome[4] -= 1000;
+                    }
+                } while (pHome[4] >= 1000);
+                do {
+                    if (pHome[3] >= 60) {
+                        pHome[2] += 1;
+                        pHome[3] -= 60;
+                    }
+                } while (pHome[3] >= 60);
+                do {
+                    if (pHome[2] >= 60) {
+                        pHome[1] += 1;
+                        pHome[2] -= 60;
+                    }
+                } while (pHome >= 60);
+                do {
+                    if (pHome[1] >= 24) {
+                        pHome[0] += 1;
+                        pHome[1] -= 24;
+                    }
+                } while (pHome >= 24);
+
+                do {
+                    if (pTime[4] >= 1000) {
+                        pTime[3] += 1;
+                        pTime[4] -= 1000;
+                    }
+                } while (pTime[4] >= 1000);
+                do {
+                    if (pTime[3] >= 60) {
+                        pTime[2] += 1;
+                        pTime[3] -= 60;
+                    }
+                } while (pTime[3] >= 60);
+                do {
+                    if (pTime[2] >= 60) {
+                        pTime[1] += 1;
+                        pTime[2] -= 60;
+                    }
+                } while (pTime >= 60);
+                do {
+                    if (pTime[1] >= 24) {
+                        pTime[0] += 1;
+                        pTime[1] -= 24;
+                    }
+                } while (pTime >= 24);
+            } else {
+                pTime = [travel_once[0], travel_once[1], travel_once[2], travel_once[3], travel_once[4]];
+                pHome = [travel_twice[0], travel_twice[1], travel_twice[2], travel_twice[3], travel_twice[4]];
+                do {
+                    if (pHome[4] >= 1000) {
+                        pHome[3] += 1;
+                        pHome[4] -= 1000;
+                    }
+                } while (pHome[4] >= 1000);
+                do {
+                    if (pHome[3] >= 60) {
+                        pHome[2] += 1;
+                        pHome[3] -= 60;
+                    }
+                } while (pHome[3] >= 60);
+                do {
+                    if (pHome[2] >= 60) {
+                        pHome[1] += 1;
+                        pHome[2] -= 60;
+                    }
+                } while (pHome >= 60);
+                do {
+                    if (pHome[1] >= 24) {
+                        pHome[0] += 1;
+                        pHome[1] -= 24;
+                    }
+                } while (pHome >= 24);
+
+                do {
+                    if (pTime[4] >= 1000) {
+                        pTime[3] += 1;
+                        pTime[4] -= 1000;
+                    }
+                } while (pTime[4] >= 1000);
+                do {
+                    if (pTime[3] >= 60) {
+                        pTime[2] += 1;
+                        pTime[3] -= 60;
+                    }
+                } while (pTime[3] >= 60);
+                do {
+                    if (pTime[2] >= 60) {
+                        pTime[1] += 1;
+                        pTime[2] -= 60;
+                    }
+                } while (pTime >= 60);
+                do {
+                    if (pTime[1] >= 24) {
+                        pTime[0] += 1;
+                        pTime[1] -= 24;
+                    }
+                } while (pTime >= 24);
+            }
+
+            //EMBED CREATION
+            let embed = new Discord.MessageEmbed();
+            embed.setAuthor(`${msg.author.username}#${msg.author.discriminator}`, msg.author.displayAvatarURL());
+            embed.setThumbnail(Bot.user.displayAvatarURL());
+            embed.setColor(0x5cc3ff);
+            embed.setTitle('Travel Time Calculator');
+            embed.setDescription(msg.content);
+            if (sHex != -1 && eHex != -1) {
+                embed.addField(':regional_indicator_a: Starting Hex', `${sHex[0]} | ${sHex[1]}`, true);
+                embed.addField(':regional_indicator_b: Ending Hex', `${eHex[0]} | ${eHex[1]}`, true);
+            }
+            embed.addField(':stopwatch: Speed', `${speed}`, true);
+            if (stargate != -1) {
+                embed.addField(':stopwatch: Return Speed', `${speed+stargate}`, true);
+            }
+            embed.addField(':left_right_arrow: Distance', `${distance}`, true);
+            if (eta != -1 && time != -1) {
+                embed.addField(':clock10: Current Time', `${(cTime[0] <10)?'0'+cTime[0]:cTime[0]}:${(cTime[1] <10)?'0'+cTime[1]:cTime[1]}:${(cTime[2] <10)?'0'+cTime[2]:cTime[2]}`, false);
+                embed.addField(':inbox_tray: ETA', `${(pTime[0] <10)?'0'+pTime[0]:pTime[0]}:${(pTime[1] <10)?'0'+pTime[1]:pTime[1]}:${(pTime[2] <10)?'0'+pTime[2]:pTime[2]}:${(pTime[3] <10)?'0'+pTime[3]:pTime[3]}.${(pTime[4] <10)?'0'+pTime[4]:pTime[4]}`, false);
+                embed.addField(':outbox_tray: Back Home', `${(pHome[0] <10)?'0'+pHome[0]:pHome[0]}:${(pHome[1] <10)?'0'+pHome[1]:pHome[1]}:${(pHome[2] <10)?'0'+pHome[2]:pHome[2]}:${(pHome[3] <10)?'0'+pHome[3]:pHome[3]}.${(pHome[4] <10)?'00'+pHome[4]:(pHome[4] <100)?'0'+pHome[4]:pHome[4]}`, false);
+            } else if (time != -1) {
+                embed.addField(':clock10: Current Time', `${(cTime[0] <10)?'0'+cTime[0]:cTime[0]}:${(cTime[1] <10)?'0'+cTime[1]:cTime[1]}:${(cTime[2] <10)?'0'+cTime[2]:cTime[2]}`, false);
+                embed.addField(':inbox_tray: ETA', `${(pTime[0] <10)?'0'+pTime[0]:pTime[0]}:${(pTime[1] <10)?'0'+pTime[1]:pTime[1]}:${(pTime[2] <10)?'0'+pTime[2]:pTime[2]}:${(pTime[3] <10)?'0'+pTime[3]:pTime[3]}.${(pTime[4] <10)?'0'+pTime[4]:pTime[4]}`, false);
+                embed.addField(':outbox_tray: Back Home', `${(pHome[0] <10)?'0'+pHome[0]:pHome[0]}:${(pHome[1] <10)?'0'+pHome[1]:pHome[1]}:${(pHome[2] <10)?'0'+pHome[2]:pHome[2]}:${(pHome[3] <10)?'0'+pHome[3]:pHome[3]}.${(pHome[4] <10)?'00'+pHome[4]:(pHome[4] <100)?'0'+pHome[4]:pHome[4]}`, false);
+            } else {
+                embed.addField(':inbox_tray: Travel To', `${(travel_once[0] <10)?'0'+travel_once[0]:travel_once[0]}:${(travel_once[1] <10)?'0'+travel_once[1]:travel_once[1]}:${(travel_once[2] <10)?'0'+travel_once[2]:travel_once[2]}:${(travel_once[3] <10)?'0'+travel_once[3]:travel_once[3]}.${(travel_once[4] <10)?'0'+travel_once[4]:travel_once[4]}`, false);
+                embed.addField(':outbox_tray: Back Home', `${(travel_twice[0] <10)?'0'+travel_twice[0]:travel_twice[0]}:${(travel_twice[1] <10)?'0'+travel_twice[1]:travel_twice[1]}:${(travel_twice[2] <10)?'0'+travel_twice[2]:travel_twice[2]}:${(travel_twice[3] <10)?'0'+travel_twice[3]:travel_twice[3]}.${(travel_twice[4] <10)?'00'+travel_twice[4]:(travel_twice[4] <100)?'0'+travel_twice[4]:travel_twice[4]}`, false);
+            }
+            
+            try {
                 msg.channel.send(embed);
                 msg.delete();
-            }
-            break;
-        case 'starthex':
-            if (args != null && args[0] != undefined && args[1] != undefined && args[1] === 'endHex' && args[2] != undefined && args[3] != undefined && args[3] === 'speed' && args[4] != undefined && args[5] != undefined && args[5] === 'time' && args[6] != undefined && args[7] != undefined && args[7] === 'eta' && args[8] != undefined) {
-
-                let eta = args[8].split(':');
-                let current_time= args[6].split(':');
-                var startHex = args[0].split(',');
-                startHex[0] = parseInt(startHex[0],10);
-                startHex[1] = parseInt(startHex[1],10);
-                var endHex = args[2].split(',');
-                endHex[0] = parseInt(endHex[0],10);
-                endHex[1] = parseInt(endHex[1],10);
-                let speed = parseInt(args[4],10);
-
-                let distance = hexDistance(parseInt(startHex[0]),parseInt(startHex[1]),parseInt(endHex[0]),parseInt(endHex[1]));
-                let oneHexTime = 60/(speed/3600);
-                var rawTime = (distance*oneHexTime)/60;
-
-                var travel_time = [0,0,0,0];
-                while (rawTime > 0) {
-                    travel_time[3]++;
-                    if (travel_time[3] >= 60) {
-                        travel_time[3]=0;
-                        travel_time[2]+=1;
-                    }
-                    if (travel_time[2] >= 60) {
-                        travel_time[2]=0;
-                        travel_time[1]+=1;
-                    }
-                    if (travel_time[1] >= 24) {
-                        travel_time[1]=0;
-                        travel_time[0]+=1;
-                    }
-                    rawTime--;
-                }
-
-                var arrival = [0,0,0,0];
-                arrival[0] = parseInt(current_time[0]) + parseInt(eta[0]);
-                arrival[1] = parseInt(current_time[1]) + parseInt(eta[1]);
-                arrival[2] = parseInt(current_time[2]) + parseInt(eta[2]);
-                arrival[3] = parseInt(current_time[3]) + parseInt(eta[3]);
-
-                if (arrival[3] >= 60) {
-                    arrival[3] -= 60;
-                    arrival[2] += 1;
-                }
-                if (arrival[2] >= 60) {
-                    arrival[2] -= 60;
-                    arrival[1] += 1;
-                }
-                if (arrival[1] >= 24) {
-                    arrival[1] -= 24;
-                    arrival[0] += 1;
-                }
-
-                var timeTillHome = [0,0,0,0];
-                timeTillHome[0] = parseInt(eta[0]) + travel_time[0];
-                timeTillHome[1] = parseInt(eta[1]) + travel_time[1];
-                timeTillHome[2] = parseInt(eta[2]) + travel_time[2];
-                timeTillHome[3] = parseInt(eta[3]) + travel_time[3];
-
-                if (timeTillHome[3] >= 60) {
-                    timeTillHome[3] -= 60;
-                    timeTillHome[2] += 1;
-                }
-                if (timeTillHome[2] >= 60) {
-                    timeTillHome[2] -= 60;
-                    timeTillHome[1] += 1;
-                }
-                if (timeTillHome[1] >= 24) {
-                    timeTillHome[1] -= 24;
-                    timeTillHome[0] += 1;
-                }
-
-                var etaTTH = [0,0,0,0];
-                etaTTH[0] = timeTillHome[0] + parseInt(current_time[0]);
-                etaTTH[1] = timeTillHome[1] + parseInt(current_time[1]);
-                etaTTH[2] = timeTillHome[2] + parseInt(current_time[2]);
-                etaTTH[3] = timeTillHome[3] + parseInt(current_time[3]);
-
-                if (etaTTH[3] >= 60) {
-                    etaTTH[3] -= 60;
-                    etaTTH[2] += 1;
-                }
-                if (etaTTH[2] >= 60) {
-                    etaTTH[2] -= 60;
-                    etaTTH[1] += 1;
-                }
-                if (etaTTH[1] >= 24) {
-                    etaTTH[1] -= 24;
-                    etaTTH[0] += 1;
-                }
-                
-
-                if (arrival[0] < 10) arrival[0] = `0${arrival[0]}`;
-                if (arrival[1] < 10) arrival[1] = `0${arrival[1]}`;
-                if (arrival[2] < 10) arrival[2] = `0${arrival[2]}`;
-                if (arrival[3] < 10) arrival[3] = `0${arrival[3]}`;
-
-                if (timeTillHome[0] < 10) timeTillHome[0] = `0${timeTillHome[0]}`;
-                if (timeTillHome[1] < 10) timeTillHome[1] = `0${timeTillHome[1]}`;
-                if (timeTillHome[2] < 10) timeTillHome[2] = `0${timeTillHome[2]}`;
-                if (timeTillHome[3] < 10) timeTillHome[3] = `0${timeTillHome[3]}`;
-                
-                if (etaTTH[0] < 10) etaTTH[0] = `0${etaTTH[0]}`;
-                if (etaTTH[1] < 10) etaTTH[1] = `0${etaTTH[1]}`;
-                if (etaTTH[2] < 10) etaTTH[2] = `0${etaTTH[2]}`;
-                if (etaTTH[3] < 10) etaTTH[3] = `0${etaTTH[3]}`;
-
-                let embed = new Discord.MessageEmbed();
-                embed.setAuthor(`${msg.author.username}#${msg.author.discriminator}`, msg.author.displayAvatarURL());
-                embed.setColor(0x5cc3ff);
-                embed.setTitle('Arrival Time Calculation');
-                embed.setThumbnail(Bot.user.displayAvatarURL());
-                embed.addField('Current Time', `${current_time[0]}:${current_time[1]}:${current_time[2]}:${current_time[3]}`, true);
-                embed.addField('ETA', `${eta[0]}:${eta[1]}:${eta[2]}:${eta[3]}`, true);
-                embed.addField('Calculated Arrival', `${arrival[0]}:${arrival[1]}:${arrival[2]}:${arrival[3]}`, false);
-                embed.addField('Start Hex', `${startHex[0]} | ${startHex[1]}`, true);
-                embed.addField('End Hex', `${endHex[0]} | ${endHex[1]}`, true);
-                embed.addField('Speed', `${speed}`, true);
-                embed.addField('ETA Time Until Home', `${timeTillHome[0]}:${timeTillHome[1]}:${timeTillHome[2]}:${timeTillHome[3]}`, false);
-                embed.addField('Time of Arrival Home', `${etaTTH[0]}:${etaTTH[1]}:${etaTTH[2]}:${etaTTH[3]}`, false);
-
-                msg.channel.send(embed);
-            } else {
-                // let embed = new Discord.MessageEmbed();
-                // embed.setAuthor(`${msg.author.username}#${msg.author.discriminator}`, msg.author.displayAvatarURL());
-                // embed.setColor(0xff413b);
-                // embed.setThumbnail(Bot.user.displayAvatarURL());
-                // embed.setTitle('Arrival Time Calculation');
-                // embed.setDescription(`How do you use this command:\n\`${config.prefix}time <current-time> eta <eta>\`\nTime Format has to be:\n\`HH:MM:SS\` and in a 24h time format\nJust use ingame time\nExample:\n\`${config.prefix}time 15:12:54 eta 00:54:54\``);
-
-                // msg.channel.send(embed);
-                // msg.delete();
+            } 
+            catch (err) {
+                console.log(err);
+                msg.channel.send('ERROR');
             }
             break;
     }
