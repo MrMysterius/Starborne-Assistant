@@ -53,12 +53,24 @@ function calcShipInfo(type, count) {
 
 /**
  * Returns Calculations for Cards of a Fleet
- * @param {Object} fleet Fleet as an object with Cards
+ * @param {String} cardName Card Name
+ * @param 
  */
-function calcCardStats(fleet) {
-    if (fleet.cards == null || fleet.cards == undefined) return false;
+function getCardStats(cardName) {
+    if (cardName == null || cardName == undefined) return -1;
 
-    
+    var id = -1;
+    for (var k=0; k<cardData.length; k++) {
+        if (cardData[k].name === cardName) {
+            id = k;
+        }
+    }
+
+    if (id === -1) {
+        return -1;
+    } else {
+        return cardData[id];
+    }
 }
 
 /**
@@ -354,6 +366,19 @@ function getStationInformation(reportString) {
                     station.fleet_cargo += parseInt(temp.base_stats.cargo, 10);
                     station.fleet_bombing += parseInt(temp.base_stats.bombing, 10);
                     station.fleet_labor += parseInt(temp.costs.labor_cost, 10);
+                }
+            }
+        }
+        if (station.cards != null && station.cards != 'N/A') {
+            for (var i=0; i<station.fleets.length; i++) {
+                if (station.fleets[i].cards != null && station.fleets[i].cards != undefined) {
+                    for (var k=0; k<station.fleets[i].cards.length; k++) {
+                        let cardStats = getCardStats(station.fleets[i].cards[k].name)
+
+                        if (cardStats !== -1) {
+                            station.fleets[i].cards[k] = cardStats;
+                        }
+                    }
                 }
             }
         }
