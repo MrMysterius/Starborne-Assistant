@@ -717,7 +717,7 @@ Bot.on("message", (msg) => {
                 var endHex = args[2].split(',');
                 endHex[0] = parseInt(endHex[0],10);
                 endHex[1] = parseInt(endHex[1],10);
-                let speed = parseInt(args[4],10);
+                let speed = parseFloat(args[4]);
 
                 let distance = hexDistance(parseInt(startHex[0]),parseInt(startHex[1]),parseInt(endHex[0]),parseInt(endHex[1]));
                 let oneHexTime = 60/(speed/3600);
