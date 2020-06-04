@@ -5,6 +5,7 @@ const Bot = new Discord.Client();
 const http = require('http');
 const server = http.createServer(function(request, response) {});
 const shipData = require('./information/ships.json');
+const cardData = require('./information/cards.json');
 
 
 
@@ -34,6 +35,7 @@ function calcShipInfo(type, count) {
     if (id === 'undefined') return false;
     let stats = {base_stats: {speed: "", fp: "", hp: "", cargo: "", scan: "", bombing: ""}, costs: {labor_cost: "", metal: "", gas: "", crystal: "", minutes: ""}, level_bonus: shipData[id].level_bonus}
     
+    stats.base_stats.speed = parseInt(shipData[id].base_stats.speed) * count;
     stats.base_stats.fp = parseInt(shipData[id].base_stats.fp, 10) * count;
     stats.base_stats.hp = parseInt(shipData[id].base_stats.hp, 10) * count;
     stats.base_stats.cargo = parseInt(shipData[id].base_stats.cargo, 10) * count;
@@ -47,6 +49,28 @@ function calcShipInfo(type, count) {
     stats.costs.minutes = parseInt(shipData[id].costs.minutes, 10) * count;
 
     return stats;
+}
+
+/**
+ * Returns Calculations for Cards of a Fleet
+ * @param {String} cardName Card Name
+ * @param 
+ */
+function getCardStats(cardName) {
+    if (cardName == null || cardName == undefined) return -1;
+
+    var id = -1;
+    for (var k=0; k<cardData.length; k++) {
+        if (cardData[k].name === cardName) {
+            id = k;
+        }
+    }
+
+    if (id === -1) {
+        return -1;
+    } else {
+        return cardData[id];
+    }
 }
 
 /**
@@ -118,7 +142,7 @@ function getStationInformation(reportString) {
         //Cards
         station.cards = ['N/A'];
         regex.cards = new RegExp('(?<=Cards: \\n)[^\\r\\n\\t\\f\\v\\.]*');
-        regex.card_names = new RegExp('cardTooltip\\(\\d*\\)[A-Za-z0-9 ]*', 'gm');
+        regex.card_names = new RegExp("cardTooltip\\(\\d*\\)[A-Za-z0-9\\ \\'\\-]*", 'gm');
         match = reportString.match(regex.cards);
         if (match != null && match[0] != undefined) {
             station.cards = [];
@@ -342,6 +366,19 @@ function getStationInformation(reportString) {
                     station.fleet_cargo += parseInt(temp.base_stats.cargo, 10);
                     station.fleet_bombing += parseInt(temp.base_stats.bombing, 10);
                     station.fleet_labor += parseInt(temp.costs.labor_cost, 10);
+                }
+            }
+        }
+        if (station.cards != null && station.cards != 'N/A') {
+            for (var i=0; i<station.fleets.length; i++) {
+                if (station.fleets[i].cards != null && station.fleets[i].cards != undefined) {
+                    for (var k=0; k<station.fleets[i].cards.length; k++) {
+                        let cardStats = getCardStats(station.fleets[i].cards[k].name)
+
+                        if (cardStats !== -1) {
+                            station.fleets[i].cards[k] = cardStats;
+                        }
+                    }
                 }
             }
         }
