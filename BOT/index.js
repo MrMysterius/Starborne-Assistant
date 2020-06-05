@@ -33,17 +33,6 @@ function getCardStats(cardName) {
 }
 
 /**
- * 
- * @param {Integer} xa StartingHex X
- * @param {Integer} xb StartingHex Y
- * @param {Integer} ya EndingHex X
- * @param {Integer} yb EndingHex Y
- */
-function hexDistance(xa, xb, ya, yb) {
-    return (Math.abs(xa - ya) + Math.abs(xa + xb - ya - yb) + Math.abs(xb - yb))/2;
-}
-
-/**
  * Makes an embed out of a Station Object
  * @param {Object} StationObject
  * @param {Object} DiscordMessageObject
@@ -410,7 +399,7 @@ Bot.on("message", (msg) => {
 
             //CALCULATIONS OF TRAVEL TIME
             if (distance === -1) {
-                distance = hexDistance(sHex[0],sHex[1],eHex[0],eHex[1]);
+                distance = lib.fnc.hexDistance(sHex[0],sHex[1],eHex[0],eHex[1]);
             }
             var travel_once = [0,0,0,0,0];
             var travel_once_stargate = [0,0,0,0,0];
