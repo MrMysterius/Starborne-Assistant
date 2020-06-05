@@ -6,19 +6,7 @@ const http = require('http');
 const server = http.createServer(function(request, response) {});
 const shipData = require('./information/ships.json');
 const cardData = require('./information/cards.json');
-const lib = require('./lib');
-
-
-
-/**
- * mc > Match Check
- * Simply checks if the match even returned something
- * @param {Object} Match The the Object of a Match
- */
-function mc(match) {
-    if (match != null && match[0] != undefined) return true;
-    return false;
-}
+global.lib = require('./lib');
 
 /**
  * Calculates Base Stats
