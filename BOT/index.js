@@ -4,8 +4,10 @@ const config = require('./config.json');
 const Bot = new Discord.Client();
 const http = require('http');
 const server = http.createServer(function(request, response) {});
-const shipData = require('./information/ships.json');
-const cardData = require('./information/cards.json');
+global.data = {
+    shipData: require('./information/ships.json'),
+    cardData: require('./information/cards.json')
+};
 global.lib = require('./lib');
 
 /**
