@@ -5,7 +5,7 @@
  * @returns {boolean} True | False - If Match Object found something
  */
 function mc(match) {
-    if (m != null && m[0] != undefined) return true;
+    if (match != null && match[0] != undefined) return true;
     return false;
 }
 
