@@ -1,4 +1,7 @@
-this.mc = require('./match-check.js');
-this.calcShipInfo = require('./calc-ships-raw.js');
+var expt = {};
 
-module.exports = this;
+expt.mc = require('./match-check.js');
+expt.calcShipInfo = require('./calc-ships-raw.js');
+expt.getStationInformation = require('./create-station.js');
+
+module.exports = expt;
