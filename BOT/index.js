@@ -11,38 +11,6 @@ global.data = {
 global.lib = require('./lib');
 
 /**
- * Calculates Base Stats
- * @param {String} Type Tpye of the Ships
- * @param {Integer} Count Count of the Ships
- */
-function calcShipInfo(type, count) {
-    var id = 'undefined';
-    count = parseInt(count, 10);
-    for (var i=0;i<shipData.length;i++) {
-        if (type.includes(shipData[i].name)) {
-            id = i;
-        }
-    }
-    if (id === 'undefined') return false;
-    let stats = {base_stats: {speed: "", fp: "", hp: "", cargo: "", scan: "", bombing: ""}, costs: {labor_cost: "", metal: "", gas: "", crystal: "", minutes: ""}, level_bonus: shipData[id].level_bonus}
-    
-    stats.base_stats.speed = parseInt(shipData[id].base_stats.speed) * count;
-    stats.base_stats.fp = parseInt(shipData[id].base_stats.fp, 10) * count;
-    stats.base_stats.hp = parseInt(shipData[id].base_stats.hp, 10) * count;
-    stats.base_stats.cargo = parseInt(shipData[id].base_stats.cargo, 10) * count;
-    stats.base_stats.scan = parseInt(shipData[id].base_stats.scan, 10) * count;
-    stats.base_stats.bombing = parseInt(shipData[id].base_stats.bombing, 10) * count;
-
-    stats.costs.labor_cost = parseInt(shipData[id].costs.labor_cost, 10) * count;
-    stats.costs.metal = parseInt(shipData[id].costs.metal, 10) * count;
-    stats.costs.gas = parseInt(shipData[id].costs.gas, 10) * count;
-    stats.costs.crystal = parseInt(shipData[id].costs.crystal, 10) * count;
-    stats.costs.minutes = parseInt(shipData[id].costs.minutes, 10) * count;
-
-    return stats;
-}
-
-/**
  * Returns Calculations for Cards of a Fleet
  * @param {String} cardName Card Name
  * @param 
@@ -349,7 +317,7 @@ function getStationInformation(reportString) {
             station.fleet_bombing = 0;
             station.fleet_labor = 0;
             for (var i=0;i<station.fleets.length;i++) {
-                let temp = calcShipInfo(station.fleets[i].type, station.fleets[i].count);
+                let temp = lib.fnc.calcShipInfo(station.fleets[i].type, station.fleets[i].count);
                 if (temp != false) {
                     station.fleets[i].stats = temp;
                     station.fleet_fp += parseInt(temp.base_stats.fp, 10);
