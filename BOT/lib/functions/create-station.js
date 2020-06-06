@@ -287,7 +287,7 @@ function getStationInformation(reportString) {
             for (var i=0; i<station.fleets.length; i++) {
                 if (station.fleets[i].cards != null && station.fleets[i].cards != undefined) {
                     for (var k=0; k<station.fleets[i].cards.length; k++) {
-                        let cardStats = getCardStats(station.fleets[i].cards[k].name)
+                        let cardStats = lib.fnc.getCardStats(station.fleets[i].cards[k].name)
 
                         if (cardStats !== -1) {
                             station.fleets[i].cards[k] = cardStats;

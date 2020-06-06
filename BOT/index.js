@@ -11,28 +11,6 @@ global.data = {
 global.lib = require('./lib');
 
 /**
- * Returns Calculations for Cards of a Fleet
- * @param {String} cardName Card Name
- * @param 
- */
-function getCardStats(cardName) {
-    if (cardName == null || cardName == undefined) return -1;
-
-    var id = -1;
-    for (var k=0; k<cardData.length; k++) {
-        if (cardData[k].name === cardName) {
-            id = k;
-        }
-    }
-
-    if (id === -1) {
-        return -1;
-    } else {
-        return cardData[id];
-    }
-}
-
-/**
  * Makes an embed out of a Station Object
  * @param {Object} StationObject
  * @param {Object} DiscordMessageObject
