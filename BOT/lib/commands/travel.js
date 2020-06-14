@@ -309,6 +309,22 @@ function run(Bot, args, msg) {
         } while (pTime >= 24);
     }
 
+    var dayString = `${(pHome[0] <10)?'0'+pHome[0]:pHome[0]}:`;
+    switch (pHome[0]) {
+        case 0:
+            dayString = 'Today at ';
+            break;
+        case 1:
+            dayString = 'Tomorrow at ';
+            break;
+        default:
+            if (pHome[0]>1) {
+                dayString = `In ${pHome[0]-1} Days at `
+            }
+            break;
+    }
+    
+
     //EMBED CREATION
     let embed = new Discord.MessageEmbed();
     embed.setAuthor(`${msg.author.username}#${msg.author.discriminator}`, msg.author.displayAvatarURL());
@@ -328,11 +344,11 @@ function run(Bot, args, msg) {
     if (eta != -1 && time != -1) {
         embed.addField(':clock10: Current Time', `${(cTime[0] <10)?'0'+cTime[0]:cTime[0]}:${(cTime[1] <10)?'0'+cTime[1]:cTime[1]}:${(cTime[2] <10)?'0'+cTime[2]:cTime[2]}`, false);
         embed.addField(':inbox_tray: ETA', `${(pTime[0] <10)?'0'+pTime[0]:pTime[0]}:${(pTime[1] <10)?'0'+pTime[1]:pTime[1]}:${(pTime[2] <10)?'0'+pTime[2]:pTime[2]}:${(pTime[3] <10)?'0'+pTime[3]:pTime[3]}.${(pTime[4] <10)?'0'+pTime[4]:pTime[4]}`, false);
-        embed.addField(':outbox_tray: Back Home', `${(pHome[0] <10)?'0'+pHome[0]:pHome[0]}:${(pHome[1] <10)?'0'+pHome[1]:pHome[1]}:${(pHome[2] <10)?'0'+pHome[2]:pHome[2]}:${(pHome[3] <10)?'0'+pHome[3]:pHome[3]}.${(pHome[4] <10)?'00'+pHome[4]:(pHome[4] <100)?'0'+pHome[4]:pHome[4]}`, false);
+        embed.addField(':outbox_tray: Back Home', `${dayString}${(pHome[1] <10)?'0'+pHome[1]:pHome[1]}:${(pHome[2] <10)?'0'+pHome[2]:pHome[2]}:${(pHome[3] <10)?'0'+pHome[3]:pHome[3]}.${(pHome[4] <10)?'00'+pHome[4]:(pHome[4] <100)?'0'+pHome[4]:pHome[4]}`, false);
     } else if (time != -1) {
         embed.addField(':clock10: Current Time', `${(cTime[0] <10)?'0'+cTime[0]:cTime[0]}:${(cTime[1] <10)?'0'+cTime[1]:cTime[1]}:${(cTime[2] <10)?'0'+cTime[2]:cTime[2]}`, false);
         embed.addField(':inbox_tray: ETA', `${(pTime[0] <10)?'0'+pTime[0]:pTime[0]}:${(pTime[1] <10)?'0'+pTime[1]:pTime[1]}:${(pTime[2] <10)?'0'+pTime[2]:pTime[2]}:${(pTime[3] <10)?'0'+pTime[3]:pTime[3]}.${(pTime[4] <10)?'0'+pTime[4]:pTime[4]}`, false);
-        embed.addField(':outbox_tray: Back Home', `${(pHome[0] <10)?'0'+pHome[0]:pHome[0]}:${(pHome[1] <10)?'0'+pHome[1]:pHome[1]}:${(pHome[2] <10)?'0'+pHome[2]:pHome[2]}:${(pHome[3] <10)?'0'+pHome[3]:pHome[3]}.${(pHome[4] <10)?'00'+pHome[4]:(pHome[4] <100)?'0'+pHome[4]:pHome[4]}`, false);
+        embed.addField(':outbox_tray: Back Home', `${dayString}${(pHome[1] <10)?'0'+pHome[1]:pHome[1]}:${(pHome[2] <10)?'0'+pHome[2]:pHome[2]}:${(pHome[3] <10)?'0'+pHome[3]:pHome[3]}.${(pHome[4] <10)?'00'+pHome[4]:(pHome[4] <100)?'0'+pHome[4]:pHome[4]}`, false);
     } else {
         embed.addField(':inbox_tray: Travel To', `${(travel_once[0] <10)?'0'+travel_once[0]:travel_once[0]}:${(travel_once[1] <10)?'0'+travel_once[1]:travel_once[1]}:${(travel_once[2] <10)?'0'+travel_once[2]:travel_once[2]}:${(travel_once[3] <10)?'0'+travel_once[3]:travel_once[3]}.${(travel_once[4] <10)?'0'+travel_once[4]:travel_once[4]}`, false);
         embed.addField(':outbox_tray: Back Home', `${(travel_twice[0] <10)?'0'+travel_twice[0]:travel_twice[0]}:${(travel_twice[1] <10)?'0'+travel_twice[1]:travel_twice[1]}:${(travel_twice[2] <10)?'0'+travel_twice[2]:travel_twice[2]}:${(travel_twice[3] <10)?'0'+travel_twice[3]:travel_twice[3]}.${(travel_twice[4] <10)?'00'+travel_twice[4]:(travel_twice[4] <100)?'0'+travel_twice[4]:travel_twice[4]}`, false);
