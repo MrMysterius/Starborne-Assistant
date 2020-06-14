@@ -1,5 +1,5 @@
 // Websocket Server Connection
-var ws = new WebSocket('ws://localhost:22277', 'echo-protocol');
+var ws = new WebSocket('wss://nohobbysfound.net:2200', 'echo-protocol');
 
 // Functions for Display Changes on site
 function toggle(btn_id, text_id, headertext) {
