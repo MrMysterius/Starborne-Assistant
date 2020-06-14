@@ -5,7 +5,7 @@ const Discord = require('discord.js');
  * @param {Object} StationObject
  * @param {Object} DiscordMessageObject
  */
-function createReportEmbed(station, msg) {
+function createReportEmbed(station, msg, Bot) {
 
     try {
         let metal = Bot.emojis.cache.find(emoji => emoji.name === 'sb_metal');

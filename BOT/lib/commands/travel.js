@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 
-function run(command, args, msg) {
+function run(Bot, args, msg) {
     //REGEX DECLARATION
     let rgxSHex = new RegExp('(?<=-startHex )[0-9\\-\\,]*');
     let rgxEHex = new RegExp('(?<=-endHex )[0-9\\-\\,]*');

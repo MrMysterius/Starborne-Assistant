@@ -1,7 +1,7 @@
-function run(command, args, msg) {
+function run(command, args, msg, Bot) {
     switch (command.toLowerCase()) {
         case 'travel':
-            require('./travel.js').run(command, args, msg);
+            require('./travel.js')(Bot, args, msg);
             break;
         default:
             break;
