@@ -28,7 +28,6 @@ class DiscordBot {
             if (msg.channel.name.includes('spy-data') || msg.channel.name.includes('spy-report')) {
                 if (msg.content.startsWith('Spy Report on hex')) {
                     try {
-                        
                         var station = lib.fnc.getStationInformation(msg.content);
         
                         if (station != 'error') {
@@ -42,9 +41,6 @@ class DiscordBot {
                                 console.log(station);
                             }
                         }
-                        
-        
-                        
                     }
                     catch (err) {
                         console.log(err,"\n\n");
@@ -63,7 +59,7 @@ class DiscordBot {
                             console.log(err);
                             console.log(station);
                         }
-                        console.log(`- ${reports[i].code}`);
+                        console.log(`[- | CODE] ${reports[i].code}`);
                         reports.splice(i,1);
                         msg.delete();
                         return;

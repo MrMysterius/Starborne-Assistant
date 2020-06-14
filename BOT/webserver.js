@@ -42,7 +42,7 @@ class wss {
                     }
                     reports.push({code: code, data: station, msg: msg});
                     this.clients[id].send(code);
-                    console.log(`+ ${code}`);
+                    console.log(`[+ | CODE] ${code}`);
                 }
             });
 
