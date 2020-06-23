@@ -259,30 +259,7 @@ function getStationInformation(reportString) {
             }
         }
 
-        //CALCULATIONS
-        station.fleet_fp = 'N/A';
-        station.fleet_hp = 'N/A';
-        station.fleet_cargo = "N/A";
-        station.fleet_bombing = "N/A";
-        station.fleet_labor = "N/A";
-        if (!(station.fleets.length === 0 || station.fleets[0] === 'N/A')) {
-            station.fleet_fp = 0;
-            station.fleet_hp = 0;
-            station.fleet_cargo = 0;
-            station.fleet_bombing = 0;
-            station.fleet_labor = 0;
-            for (var i=0;i<station.fleets.length;i++) {
-                let temp = lib.fnc.calcShipInfo(station.fleets[i].type, station.fleets[i].count);
-                if (temp != false) {
-                    station.fleets[i].stats = temp;
-                    station.fleet_fp += parseInt(temp.base_stats.fp, 10);
-                    station.fleet_hp += parseInt(temp.base_stats.hp, 10);
-                    station.fleet_cargo += parseInt(temp.base_stats.cargo, 10);
-                    station.fleet_bombing += parseInt(temp.base_stats.bombing, 10);
-                    station.fleet_labor += parseInt(temp.costs.labor_cost, 10);
-                }
-            }
-        }
+        //GETTING CARD INFORMATIONS
         if (station.cards != null && station.cards != 'N/A') {
             for (var i=0; i<station.fleets.length; i++) {
                 if (station.fleets[i].cards != null && station.fleets[i].cards != undefined) {
@@ -296,6 +273,56 @@ function getStationInformation(reportString) {
                 }
             }
         }
+        
+        //CALCULATIONS
+        station.fleet_fp_base = 'N/A';
+        station.fleet_hp_base = 'N/A';
+        station.fleet_cargo_base = "N/A";
+        station.fleet_bombing_base = "N/A";
+        station.fleet_fp_min = 'N/A';
+        station.fleet_hp_min = 'N/A';
+        station.fleet_cargo_min = "N/A";
+        station.fleet_bombing_min = "N/A";
+        station.fleet_fp_max = 'N/A';
+        station.fleet_hp_max = 'N/A';
+        station.fleet_cargo_max = "N/A";
+        station.fleet_bombing_max = "N/A";
+        station.fleet_labor = "N/A";
+        if (!(station.fleets.length === 0 || station.fleets[0] === 'N/A')) {
+            station.fleet_fp_base = 0;
+            station.fleet_hp_base = 0;
+            station.fleet_cargo_base = 0;
+            station.fleet_bombing_base = 0;
+            station.fleet_fp_min = 0;
+            station.fleet_hp_min = 0;
+            station.fleet_cargo_min = 0;
+            station.fleet_bombing_min = 0;
+            station.fleet_fp_max = 0;
+            station.fleet_hp_max = 0;
+            station.fleet_cargo_max = 0;
+            station.fleet_bombing_max = 0;
+            station.fleet_labor = 0;
+            for (var i=0;i<station.fleets.length;i++) {
+                let temp = lib.fnc.calcFleetStats(station.fleets[i]);
+                if (temp != false) {
+                    station.fleets[i].stats = temp;
+                    station.fleet_fp_base += parseInt(temp.base_stats.fp, 10);
+                    station.fleet_hp_base += parseInt(temp.base_stats.hp, 10);
+                    station.fleet_cargo_base += parseInt(temp.base_stats.cargo, 10);
+                    station.fleet_bombing_base += parseInt(temp.base_stats.bombing, 10);
+                    station.fleet_fp_min += temp.calc_min_stats.fp;
+                    station.fleet_hp_min += temp.calc_min_stats.hp;
+                    station.fleet_cargo_min += temp.calc_min_stats.cargo;
+                    station.fleet_bombing_min += temp.calc_min_stats.bombing;
+                    station.fleet_fp_max += temp.calc_max_stats.fp;
+                    station.fleet_hp_max += temp.calc_max_stats.hp;
+                    station.fleet_cargo_max += temp.calc_max_stats.cargo;
+                    station.fleet_bombing_max += temp.calc_max_stats.bombing;
+                    station.fleet_labor += parseInt(temp.costs.labor_cost, 10);
+                }
+            }
+        }
+        
 
         if (reportString.startsWith('DEBUG')) {
             console.log(station);

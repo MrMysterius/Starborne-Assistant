@@ -34,7 +34,7 @@ function createReportEmbed(station, msg, Bot) {
         embed.addField('Station Hidden Resources', `${metal.toString()} ${station.resources_hidden.metal} ${gas.toString()} ${station.resources_hidden.gas} ${crystal.toString()} ${station.resources_hidden.crystal}`, true)
 
         //Labor
-        embed.addField('Labor', `${station.fleet_labor} / ${station.labor}`, true);
+        embed.addField('Labor', `'${station.fleet_labor}' / ${station.labor}`, true);
 
         //Station Cards
         var cardsString = '';
@@ -135,7 +135,12 @@ function createReportEmbed(station, msg, Bot) {
         }
 
         //Fleet Stats
-        embed.addField(`Min Fleet Stats`, `FP: ${parseInt(station.fleet_fp,10)}\nHP: ${parseInt(station.fleet_hp,10)}\nCargo: ${parseInt(station.fleet_cargo,10)}\nBombing: ${parseInt(station.fleet_bombing,10)}`);
+        embed.addField(`Raw Fleet Stats`, `FP: ${parseInt(station.fleet_fp_base,10)}\nHP: ${parseInt(station.fleet_hp_base,10)}\nCargo: ${parseInt(station.fleet_cargo_base,10)}\nBombing: ${parseInt(station.fleet_bombing_base,10)}`);
+        //Min Fleet Stats With Cards
+        embed.addField(`Min Fleet Stats w/ Cards`, `FP: ${parseInt(station.fleet_fp_min,10)}\nHP: ${parseInt(station.fleet_hp_min,10)}\nCargo: ${parseInt(station.fleet_cargo_min,10)}\nBombing: ${parseInt(station.fleet_bombing_min,10)}`);
+        //Max Level Stats with cards
+        embed.addField(`Max Level Bonus Fleet Stats w/ Cards`, `FP: ${parseInt(station.fleet_fp_max,10)}\nHP: ${parseInt(station.fleet_hp_max,10)}\nCargo: ${parseInt(station.fleet_cargo_max,10)}\nBombing: ${parseInt(station.fleet_bombing_max,10)}`);
+
 
         console.log(`# ${msg.guild.name}#${msg.channel.name}|${msg.channel.id} - ${msg.author.username}#${msg.author.discriminator}`);
     }
