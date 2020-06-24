@@ -79,7 +79,7 @@ function calcFleetStats(fleet) {
     if (id === -1) return false;
 
     //Easier Refrence
-    let ship = data.shipData[i];
+    let ship = data.shipData[id];
 
     //Level Bonus Entry
     if (ship.level_bonus.speed != undefined) {
@@ -270,20 +270,20 @@ function calcFleetStats(fleet) {
     }
 
     //MIN STATS WITH CARDS
-    stats.calc_min_stats.speed = (ip(ship.base_stats.speed) + calcNums.b_speed) * calcNums.bp_speed;
-    stats.calc_min_stats.fp = (ip(ship.base_stats.fp) + calcNums.b_fp) * calcNums.bp_fp;
-    stats.calc_min_stats.hp = (ip(ship.base_stats.hp) + calcNums.b_hp) * calcNums.bp_hp;
-    stats.calc_min_stats.cargo = (ip(ship.base_stats.cargo) + calcNums.b_cargo) * calcNums.bp_cargo;
-    stats.calc_min_stats.scan = (ip(ship.base_stats.scan) + calcNums.b_scan) * calcNums.bp_scan;
-    stats.calc_min_stats.bombing = (ip(ship.base_stats.bombing) + calcNums.b_bombing) * calcNums.bp_bombing;
+    stats.calc_min_stats.speed = (ip(ship.base_stats.speed) + calcNums.b_speed) * calcNums.bp_speed * count;
+    stats.calc_min_stats.fp = (ip(ship.base_stats.fp) + calcNums.b_fp) * calcNums.bp_fp * count;
+    stats.calc_min_stats.hp = (ip(ship.base_stats.hp) + calcNums.b_hp) * calcNums.bp_hp * count;
+    stats.calc_min_stats.cargo = (ip(ship.base_stats.cargo) + calcNums.b_cargo) * calcNums.bp_cargo * count;
+    stats.calc_min_stats.scan = (ip(ship.base_stats.scan) + calcNums.b_scan) * calcNums.bp_scan * count;
+    stats.calc_min_stats.bombing = (ip(ship.base_stats.bombing) + calcNums.b_bombing) * calcNums.bp_bombing * count;
 
     //MAX STATS WITH CARDS AND LEVEL
-    stats.calc_max_stats.speed = (ip(ship.base_stats.speed) + calcNums.b_speed + (stats.level_bonus.speed * 4)) * calcNums.bp_speed;
-    stats.calc_max_stats.fp = (ip(ship.base_stats.fp) + calcNums.b_fp + (stats.level_bonus.fp * 4)) * calcNums.bp_fp;
-    stats.calc_max_stats.hp = (ip(ship.base_stats.hp) + calcNums.b_hp + (stats.level_bonus.hp * 4)) * calcNums.bp_hp;
-    stats.calc_max_stats.cargo = (ip(ship.base_stats.cargo) + calcNums.b_cargo + (stats.level_bonus.cargo * 4)) * calcNums.bp_cargo;
-    stats.calc_max_stats.scan = (ip(ship.base_stats.scan) + calcNums.b_scan + (stats.level_bonus.scan * 4)) * calcNums.bp_scan;
-    stats.calc_max_stats.bombing = (ip(ship.base_stats.bombing) + calcNums.b_bombing + (stats.level_bonus.bombing * 4)) * calcNums.bp_bombing;
+    stats.calc_max_stats.speed = (ip(ship.base_stats.speed) + calcNums.b_speed + (stats.level_bonus.speed * 4)) * calcNums.bp_speed * count;
+    stats.calc_max_stats.fp = (ip(ship.base_stats.fp) + calcNums.b_fp + (stats.level_bonus.fp * 4)) * calcNums.bp_fp * count;
+    stats.calc_max_stats.hp = (ip(ship.base_stats.hp) + calcNums.b_hp + (stats.level_bonus.hp * 4)) * calcNums.bp_hp * count;
+    stats.calc_max_stats.cargo = (ip(ship.base_stats.cargo) + calcNums.b_cargo + (stats.level_bonus.cargo * 4)) * calcNums.bp_cargo * count;
+    stats.calc_max_stats.scan = (ip(ship.base_stats.scan) + calcNums.b_scan + (stats.level_bonus.scan * 4)) * calcNums.bp_scan * count;
+    stats.calc_max_stats.bombing = (ip(ship.base_stats.bombing) + calcNums.b_bombing + (stats.level_bonus.bombing * 4)) * calcNums.bp_bombing * count;
 
     return stats;
 }
