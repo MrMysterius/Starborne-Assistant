@@ -1,4 +1,29 @@
 const Discord = require('discord.js');
+const https = require('https');
+const fs = require('fs');
+
+function download(url, msg, cb) {
+    try {
+        let rdm = Math.floor(Math.random() * 1000000000);
+        let path = `./downloads/${rdm}.txt`
+        var file = fs.createWriteStream(path, 'utf-8');
+        var req = https.get(url, (res) => {
+            res.pipe(file);
+            file.on('finish', () => {
+                file.close();
+                let read = fs.readFileSync(path.toString(), 'utf-8');
+                fs.unlink(path, ()=>{});
+                let regex = new RegExp('\\r','g');
+                read = read.replace(regex, '');
+                cb(read, msg);
+                return;
+            })
+        })
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
 
 class DiscordBot {
     constructor (token, config) {
@@ -23,16 +48,16 @@ class DiscordBot {
         })
 
         this.client.on('message', (msg) => {
-            if (msg.author.bot || msg.channel.name == undefined) return;
+            if (msg.author.bot) return;
 
-            if (msg.channel.name.includes('spy-data') || msg.channel.name.includes('spy-report')) {
+            if (msg.channel.name != undefined && (msg.channel.name.includes('spy-data') || msg.channel.name.includes('spy-report')) || msg.channel.type == 'dm') {
                 if (msg.content.startsWith('Spy Report on hex')) {
                     try {
                         var station = lib.fnc.getStationInformation(msg.content);
         
                         if (station != 'error') {
                             msg.delete();
-                            let embed = lib.fnc.createReportEmbed(station, msg, this.client, this.client);
+                            let embed = lib.fnc.createReportEmbed(station, msg, this.client);
                             try {
                                 msg.channel.send(embed);
                             }
@@ -45,6 +70,35 @@ class DiscordBot {
                     catch (err) {
                         console.log(err,"\n\n");
                     }
+                    return;
+                }
+
+                let attach = msg.attachments.array()[0]
+                if (attach != undefined && attach.name == 'message.txt' && attach.size < 100000) {
+                    download(attach.url, msg, (text, mobj) => {
+                        if (!text.startsWith('Spy Report on hex')) return;
+                        try {
+                            var station = lib.fnc.getStationInformation(text);
+
+                            if (station != 'error') {
+                                let embed = lib.fnc.createReportEmbed(station, mobj, this.client);
+                                try {
+                                    if (mobj.deletable) {
+                                        mobj.delete();
+                                    }
+                                    mobj.channel.send(embed);
+                                }
+                                catch (err) {
+                                    console.log(err);
+                                    console.log(station);
+                                }
+                            }
+                        }
+                        catch (err) {
+                            console.log(err,"\n\n");
+                        }
+                        return;
+                    });
                     return;
                 }
         
