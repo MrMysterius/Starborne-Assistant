@@ -129,6 +129,8 @@ class DiscordBot {
             lib.cmd(command, args, msg, this.client);
         })
 
+        this.guild_count = 0;
+
         //WHEN CLIENT IS READY DISPLAY ALL GUILDS THE BOT IS ON AND ALSO MAKE A INTERVAL TO DISPLAY ACTIVITY INFO
         this.activityInterval = -1;     //INTERVAL ID TO CLEAR IT IF READY CALLED AGAIN AFTER RECONNECT
         this.client.on('ready', () => {
@@ -151,9 +153,11 @@ class DiscordBot {
                     counter++;
                 })
                 this.client.user.setPresence({activity: {name: `${config.prefix}help | ${counter} Guilds`}, status: "online"});
+                this.guild_count = counter;
             },60000);
         })
 
+        this.config = config;
         this.client.login(token);
     }
 }
