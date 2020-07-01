@@ -13,7 +13,7 @@ global.lib = require('./lib');
 
 
 //WEBSOCKETSERVER
-const wss = new WebSocketServer(22277);
+global.wss = new WebSocketServer(22277);
 
 //DISCORD BOT
-const bot = new DiscordBot(config.discordToken, config);
+global.bot = new DiscordBot(config.discordToken, config);
