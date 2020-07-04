@@ -78,8 +78,12 @@ function createReportEmbed(station, msg, Bot) {
             var tempString = '';
             for (var i=0;i<station.fleets.length;i++) {
                 tempString = '';
+                var extra = '';
                 if (station.fleets[i].cards != undefined) {
-                    tempString += `${station.fleets[i].count} ${station.fleets[i].type}\nCards: `;
+                    if (station.fleets[i].player_name != undefined) {
+                        extra = ` from ${station.fleets[i].player_name}\n`;
+                    }
+                    tempString += `${station.fleets[i].count} ${station.fleets[i].type}${extra}\nCards: `;
                     let length = station.fleets[i].cards.length;
                     for (var l=0; l<length; l++) {
                         if (l === length-1) {
@@ -89,10 +93,10 @@ function createReportEmbed(station, msg, Bot) {
                         }
                     }
                 } else {
-                    tempString += `${station.fleets[i].count} ${station.fleets[i].type}\n`;
-                }
-                if (station.fleets[i].player_name != undefined) {
-                    tempString += `From: ${station.fleets[i].player_name}\n`;
+                    if (station.fleets[i].player_name != undefined) {
+                        extra = ` from ${station.fleets[i].player_name}\n`;
+                    }
+                    tempString += `${station.fleets[i].count} ${station.fleets[i].type}${extra}\n`;
                 }
                 if (fleetString.length + tempString.length >= 1020) {
                     embed.addField(`Fleets ${counter}`, `${fleetString}`, false);
