@@ -4,9 +4,39 @@
 
 Collum Name | Type | Primary Key | Not Null | Default
 ------------|------|-------------|----------|--------
-server_id | varchar(50) | :white_check_mark: | :white_check_mark: | 
-custom_prefix | varchar(5) | :x: | :x: | NULL
+server_id | VARCHAR(50) | :white_check_mark: | :white_check_mark: | :x:
+custom_prefix | VARCHAR(5) | :x: | :x: | NULL
 consent | INTEGER | :x: | :white_check_mark: | 0
+
+`channel_settings`
+
+Collum Name | Type | Primary Key | Not Null | Default
+------------|------|-------------|----------|--------
+server_id | VARCHAR(50) | :white_check_mark: | :white_check_mark: | :x:
+channel_id | VARCHAR(50) | :white_check_mark: | :white_check_mark: | :x:
+starborne_server | INTEGER | :x: | :x: | NULL
+auto_category_enabled | INTEGER | :x: | :white_check_mark: | 0
+category_id | VARCHAR(50) | :x: | :x: | NULL
+deletion_timeout | INTEGER | :x: | :x: | 2800
+
+`auto_channels`
+
+Collum Name | Type | Primary Key | Not Null | Default
+------------|------|-------------|----------|--------
+server_id | VARCHAR(50) | :white_check_mark: | :white_check_mark: | :x:
+channel_id | VARCHAR(50) | :white_check_mark: | :white_check_mark: | :x:
+last_message_timestamp | INTEGER | :x: | :white_check_mark: | :x:
+
+`messages`
+
+Collum Name | Type | Primary Key | Not Null | Default
+------------|------|-------------|----------|--------
+id | INTEGER | :white_check_mark: | :white_check_mark: | AUTOINCREMENT
+message_id | VARCHAR(50) | :x: | :white_check_mark: | :x:
+user_id | VARCHAR(50) | :x: | :white_check_mark: | :x:
+station | TEXT | :x: | :x: | :x:
+spy_report | TEXT | :x: | :x:
+timestamp | INTEGER | :x: | :white_check_mark: | :x:
 
 # Database Actions
 
