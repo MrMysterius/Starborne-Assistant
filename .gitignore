@@ -105,3 +105,6 @@ dist
 
 #Config.json Exlusion
 BOT/config.json
+
+#Databases Exclution
+BOT/database/
