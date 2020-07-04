@@ -5,41 +5,41 @@
 > server_id
 
 ### channel_settings
-> server_id
+> server_id <br>
 > channel_id
 
 ### auto_channels
-> server_id
-> channel_id
+> server_id <br>
+> channel_id <br>
 > last_message_timestamp
 
 ### messages
-> messages_id
-> user_id
-> station
-> spy_report
+> messages_id <br>
+> user_id <br>
+> station <br>
+> spy_report <br>
 > timestamp
 
 ## Updating
 ### server_settings
-> custom_prefix
+> custom_prefix <br>
 > store_consent
 
 > server_id
 
 ### channel_settings
-> starborne_server
-> auto_category_enabled
-> category_id
+> starborne_server <br>
+> auto_category_enabled <br> 
+> category_id <br>
 > deletion_timeout
 
-> server_id
+> server_id <br>
 > channel_id
 
 ### auto_channels
 > last_message_timestamp
 
-> server_id
+> server_id <br>
 > channel_id
 
 ## Deletion
@@ -47,11 +47,11 @@
 > server_id
 
 ### channel_settings
-> server_id
+> server_id <br>
 > channel_id
 
 ### auto_channels
-> server_id
+> server_id <br>
 > channel_id
 
 ### messages
