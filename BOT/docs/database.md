@@ -1,6 +1,7 @@
 # Database Tables
 
-> servers <br>
+`servers`
+
 Collum Name | Type | Primary Key | Not Null | Default
 ------------|------|-------------|----------|--------
 server_id | varchar(50) | :white_check_mark: | :white_check_mark: | 
