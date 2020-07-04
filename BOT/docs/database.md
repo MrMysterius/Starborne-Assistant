@@ -1,4 +1,13 @@
-# Database
+# Database Tables
+
+> servers
+Collum Name | Type | Primary Key | Not Null | Default
+------------|------|-------------|----------|--------
+server_id | varchar(50) | :white_check_mark: | :white_check_mark: | 
+custom_prefix | varchar(5) | :x: | :x: | NULL
+consent | INTEGER | :x: | :white_check_mark: | 0
+
+# Database Actions
 
 ## Insertion
 ### servers
