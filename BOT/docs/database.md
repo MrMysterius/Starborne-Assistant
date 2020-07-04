@@ -35,7 +35,7 @@ id | INTEGER | :white_check_mark: | :white_check_mark: | AUTOINCREMENT
 message_id | VARCHAR(50) | :x: | :white_check_mark: | :x:
 user_id | VARCHAR(50) | :x: | :white_check_mark: | :x:
 station | TEXT | :x: | :x: | :x:
-spy_report | TEXT | :x: | :x:
+spy_report | TEXT | :x: | :x: | :x:
 timestamp | INTEGER | :x: | :white_check_mark: | :x:
 
 # Database Actions
@@ -93,6 +93,21 @@ timestamp | INTEGER | :x: | :white_check_mark: | :x:
 ### auto_channels
 > server_id <br>
 > channel_id
+
+### messages
+> id
+
+# Database Gets
+
+### servers
+> server_id
+
+### channel_settings
+> server_id <br>
+> channel_id
+
+### auto_channels
+> tiemout
 
 ### messages
 > id
