@@ -143,6 +143,7 @@ function getStationInformation(reportString) {
         regex.fleets_detail = new RegExp("\\d* [A-Za-z\\ ']*\\nCards: [A-Za-z0-9\\ '\\(\\)\\,\\-]*\\.", 'gm');
         regex.fleets_names = new RegExp("\\d* [A-Za-z\\ ']*", 'gm');
         regex.fleets_names_alt = new RegExp("[A-Za-z\\ ']*", 'gm');
+        regex.fleets_player_names = new RegExp("(?<=From playerProfile\\()[\\S]*(?=\\))", "gm");
         match = reportString.match(regex.fleets);
         if (match != null && match != undefined) {
             station.fleets = [];
@@ -189,6 +190,15 @@ function getStationInformation(reportString) {
                         }
                         station.fleets.push(pushObj);
                     }
+                }
+            }
+        }
+        //FLEET PLAYER NAMES
+        match = reportString.match(regex.fleets_player_names);
+        if (lib.fnc.mc(match)) {
+            if (match.length == station.fleets.length) {
+                for (var i=0; i<station.fleets.length;i++) {
+                    station.fleets[i].player_name = match[i]
                 }
             }
         }
