@@ -108,3 +108,6 @@ BOT/config.json
 
 #Databases Exclution
 BOT/database/
+
+#Example Exclution
+BOT/test-files/
