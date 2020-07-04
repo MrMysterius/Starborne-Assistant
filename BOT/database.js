@@ -6,7 +6,7 @@ class database {
         dir = path.join(process.cwd()+dir);
 
         //new db object
-        this.database = new sqlite3(dir, {verbose: console.log});
+        this.database = new sqlite3(dir);
 
         //Making sure tables are set
         //servers
