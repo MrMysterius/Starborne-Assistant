@@ -9,8 +9,8 @@ class database {
         this.database = new sqlite3(dir, {verbose: console.log});
 
         //Making sure tables are set
-        //server_settings
-        this.database.prepare('CREATE TABLE IF NOT EXISTS server_settings ([server_id] VARCHAR(50) PRIMARY KEY NOT NULL, [custom_prefix] VARCHAR(5) DEFAULT NULL, [store_consent] INTEGER NOT NULL DEFAULT 0)').run();
+        //servers
+        this.database.prepare('CREATE TABLE IF NOT EXISTS servers ([server_id] VARCHAR(50) PRIMARY KEY NOT NULL, [custom_prefix] VARCHAR(5) DEFAULT NULL, [store_consent] INTEGER NOT NULL DEFAULT 0)').run();
         //channel_settings
         this.database.prepare('CREATE TABLE IF NOT EXISTS channel_settings ([server_id] VARCHAR(50) NOT NULL, [channel_id] VARCHAR(50) NOT NULL, [starborne_server] INTEGER DEFAULT NULL, [auto_category_enabled] INTEGER NOT NULL DEFAULT 0, [category_id] VARCHAR(50) DEFAULT NULL, [deletion_timeout] INTEGER DEFAULT 2880, PRIMARY KEY (channel_id, server_id))').run();
         //auto_channels
@@ -20,9 +20,9 @@ class database {
 
         //Statements
         const stmt = {
-            server_settings_insert: this.database.prepare('INSERT INTO server_settings (server_id) VALUES (@server_id)'),
-            server_settings_update: this.database.prepare('UPDATE server_settings SET custom_prefix = @custom_prefix, store_consent = @store_consent WHERE server_id = @server_id'),
-            server_settings_delete: this.database.prepare('DELETE FROM server_settings WHERE server_id = @server_id'),
+            servers_insert: this.database.prepare('INSERT INTO servers (server_id) VALUES (@server_id)'),
+            servers_update: this.database.prepare('UPDATE servers SET custom_prefix = @custom_prefix, store_consent = @store_consent WHERE server_id = @server_id'),
+            servers_delete: this.database.prepare('DELETE FROM servers WHERE server_id = @server_id'),
             channel_settings_insert: this.database.prepare('INSERT INTO channel_settings (server_id, channel_id) VALUES (@server_id, @channel_id)'),
             channel_settings_update: this.database.prepare('UPDATE channel_settings SET starborne_server = @starborne_server, auto_category_enabled = @auto_category_enabled, category_id = @category_id, deletion_timeout = @deletion_timeout WHERE server_id = @server_id AND channel_id = @channel_id'),
             channel_settings_delete: this.database.prepare('DELETE FROM channel_settings WHERE server_id = @server_id AND channel_id = @channel_id'),
@@ -38,17 +38,17 @@ class database {
         this.queue_interval_id = setInterval(() => {
             if (this.queue.length != 0) {
                 switch (this.queue[0].table) {
-                    //server_settings
-                    case 'server_settings':
+                    //servers
+                    case 'servers':
                         switch (this.queue[0].action) {
                             case 'insert':
-                                stmt.server_settings_insert.run(this.queue[0].data);
+                                stmt.servers_insert.run(this.queue[0].data);
                                 break;
                             case 'update':
-                                stmt.server_settings_update.run(this.queue[0].data);
+                                stmt.servers_update.run(this.queue[0].data);
                                 break;
                             case 'delete':
-                                stmt.server_settings_delete.run(this.queue[0].data);
+                                stmt.servers_delete.run(this.queue[0].data);
                         }
                         break;
                     case 'channels_settings':
@@ -109,9 +109,9 @@ class database {
      * @param {string} server_id
      * @returns {promise}
      */
-    server_settings(server_id) {
+    servers(server_id) {
         return new Promise((resolve) => {
-            let row = this.database.prepare('SELECT * FROM server_settings WHERE server_id = ?').get(server_id);
+            let row = this.database.prepare('SELECT * FROM servers WHERE server_id = ?').get(server_id);
             if (row != undefined && row.server_id != undefined) {
                 resolve(row);
             } else {

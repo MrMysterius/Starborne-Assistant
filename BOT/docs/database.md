@@ -1,7 +1,7 @@
 # Database
 
 ## Insertion
-### server_settings
+### servers
 > server_id
 
 ### channel_settings
@@ -21,7 +21,7 @@
 > timestamp
 
 ## Updating
-### server_settings
+### servers
 > custom_prefix <br>
 > store_consent
 
@@ -43,7 +43,7 @@
 > channel_id
 
 ## Deletion
-### server_settings
+### servers
 > server_id
 
 ### channel_settings
