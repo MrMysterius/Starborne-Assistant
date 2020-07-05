@@ -14,7 +14,7 @@ class database {
         //channel_settings
         this.database.prepare('CREATE TABLE IF NOT EXISTS channel_settings ([server_id] VARCHAR(50) NOT NULL, [channel_id] VARCHAR(50) NOT NULL, [starborne_server] INTEGER DEFAULT NULL, [auto_category_enabled] INTEGER NOT NULL DEFAULT 0, [category_id] VARCHAR(50) DEFAULT NULL, [deletion_timeout] INTEGER DEFAULT 2880, PRIMARY KEY (channel_id, server_id))').run();
         //auto_channels
-        this.database.prepare('CREATE TABLE IF NOT EXISTS auto_channels ([server_id] VARCHAR(50) NOT NULL, [channel_id] VARCHAR(50) NOT NULL, [last_message_timestamp] INTEGER NOT NULL, PRIMARY KEY(server_id, channel_id))').run();
+        this.database.prepare('CREATE TABLE IF NOT EXISTS auto_channels ([server_id] VARCHAR(50) NOT NULL, [channel_id] VARCHAR(50) NOT NULL, [last_message_timestamp] INTEGER NOT NULL, [timeout] INTEGER NOT NULL, PRIMARY KEY(server_id, channel_id))').run();
         //messages
         this.database.prepare('CREATE TABLE IF NOT EXISTS messages ([id] INTEGER NOT NULL, [message_id] VARCHAR(50) NOT NULL, [user_id] VARCHAR(50) NOT NULL, [station] TEXT, [spy_report] TEXT, [timestamp] INTEGER NOT NULL, PRIMARY KEY(id AUTOINCREMENT))').run();
 
@@ -26,7 +26,7 @@ class database {
             channel_settings_insert: this.database.prepare('INSERT INTO channel_settings (server_id, channel_id) VALUES (@server_id, @channel_id)'),
             channel_settings_update: this.database.prepare('UPDATE channel_settings SET starborne_server = @starborne_server, auto_category_enabled = @auto_category_enabled, category_id = @category_id, deletion_timeout = @deletion_timeout WHERE server_id = @server_id AND channel_id = @channel_id'),
             channel_settings_delete: this.database.prepare('DELETE FROM channel_settings WHERE server_id = @server_id AND channel_id = @channel_id'),
-            auto_channels_insert: this.database.prepare('INSERT INTO auto_channels (server_id, channel_id, last_message_timestamp) VALUES (@server_id, @channel_id, @last_message_timestamp)'),
+            auto_channels_insert: this.database.prepare('INSERT INTO auto_channels (server_id, channel_id, last_message_timestamp, timeout) VALUES (@server_id, @channel_id, @last_message_timestamp, @timeout)'),
             auto_channels_update: this.database.prepare('UPDATE auto_channels SET last_message_timestamp = @last_message_timestamp WHERE server_id = @server_id AND channel_id = @channel_id'),
             auto_channels_delete: this.database.prepare('DELETE FROM auto_channels WHERE server_id = @server_id AND channel_id = @channel_id'),
             messages_insert: this.database.prepare('INSERT INTO messages (message_id, user_id, station, spy_report, timestamp) VALUES (@message_id, @user_id, @station, @spy_report, @timestamp)'),
@@ -135,13 +135,12 @@ class database {
         });
     }
     /**
-     * @param {number} timeout Current timeout
+     * @param {string} server_id Server ID
      * @returns {promise}
      */
-    auto_channels(timeout) {
+    auto_channels(server_id) {
         return new Promise((resolve) => {
-            let timestamp = new Date().getTime() - (timeout*60);
-            let rows = this.database.prepare('SELECT * FROM auto_channels WHERE last_message_timestamp <= ?').all(timestamp);
+            let rows = this.database.prepare('SELECT * FROM auto_channels WHERE server_id = ?').all(server_id);
             if (rows != undefined) {
                 resolve(rows);
             } else {

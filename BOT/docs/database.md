@@ -26,6 +26,7 @@ Collum Name | Type | Primary Key | Not Null | Default
 server_id | VARCHAR(50) | :white_check_mark: | :white_check_mark: | :x:
 channel_id | VARCHAR(50) | :white_check_mark: | :white_check_mark: | :x:
 last_message_timestamp | INTEGER | :x: | :white_check_mark: | :x:
+timeout | INTEGER | :x: | :white_check_mark: | :x:
 
 ### messages
 
@@ -51,7 +52,8 @@ timestamp | INTEGER | :x: | :white_check_mark: | :x:
 ### auto_channels
 > server_id <br>
 > channel_id <br>
-> last_message_timestamp
+> last_message_timestamp <br>
+> timeout
 
 ### messages
 > messages_id <br>
@@ -107,7 +109,7 @@ timestamp | INTEGER | :x: | :white_check_mark: | :x:
 > channel_id
 
 ### auto_channels
-> tiemout
+> server_id
 
 ### messages
 > id
