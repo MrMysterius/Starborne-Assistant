@@ -14,7 +14,7 @@ class database {
         //channel_settings
         this.database.prepare('CREATE TABLE IF NOT EXISTS channel_settings ([server_id] VARCHAR(50) NOT NULL, [channel_id] VARCHAR(50) NOT NULL, [starborne_server] INTEGER DEFAULT NULL, [auto_category_enabled] INTEGER NOT NULL DEFAULT 0, [category_id] VARCHAR(50) DEFAULT NULL, [deletion_timeout] INTEGER DEFAULT 2880, PRIMARY KEY (channel_id, server_id))').run();
         //auto_channels
-        this.database.prepare('CREATE TABLE IF NOT EXISTS auto_channels ([server_id] VARCHAR(50) NOT NULL, [channel_id] VARCHAR(50) NOT NULL, [last_message_timestamp] INTEGER NOT NULL, [timeout] INTEGER NOT NULL, PRIMARY KEY(server_id, channel_id))').run();
+        this.database.prepare('CREATE TABLE IF NOT EXISTS auto_channels ([server_id] VARCHAR(50) NOT NULL, [channel_id] VARCHAR(50) NOT NULL, [last_message_timestamp] INTEGER NOT NULL, [timeout] INTEGER NOT NULL, [hex], PRIMARY KEY(server_id, channel_id))').run();
         //messages
         this.database.prepare('CREATE TABLE IF NOT EXISTS messages ([id] INTEGER NOT NULL, [message_id] VARCHAR(50) NOT NULL, [user_id] VARCHAR(50) NOT NULL, [station] TEXT, [spy_report] TEXT, [timestamp] INTEGER NOT NULL, PRIMARY KEY(id AUTOINCREMENT))').run();
 

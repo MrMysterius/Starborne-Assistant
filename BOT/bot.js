@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const https = require('https');
 const fs = require('fs');
+const database = require('./database');
 
 function download(url, msg, cb) {
     try {
@@ -27,31 +28,112 @@ function download(url, msg, cb) {
 
 class DiscordBot {
     constructor (token, config) {
-        this.client = new Discord.Client();
+        this.client = new Discord.Client(); //New Discord Client
 
         //ADDED TO GUILD
         this.client.on('guildCreate', (guild) => {
-            console.log(`[+ | GUILD] ${guild.name} | ${guild.owner.user.tag}`);
+            console.log(`[+ | GUILD] ${guild.name} | ${guild.owner.user.tag}`); //CONSOLE LOG
+            db.add('servers', 'insert', {server_id: guild.id}); //DATABASE ENTRY INSERTION
         })
 
         //REMOVED FROM GUILD
         this.client.on('guildDelete', (guild) => {
-            console.log(`[- | GUILD] ${guild.name} | ${guild.owner.user.tag}`);
+            console.log(`[- | GUILD] ${guild.name} | ${guild.owner.user.tag}`); //CONSOLE LOG
+            db.add('servers', 'delete', {server_id: guild.id}); //DATABASE ENTRY DELETION
         })
 
         this.client.on('message', (msg) => {
-            if (msg.author.bot) return;
+            if (msg.author.bot) return; //RETURNING IF AUTHOR IS A BOT
 
-            if (msg.channel.name != undefined && (msg.channel.name.includes('spy-data') || msg.channel.name.includes('spy-report')) || msg.channel.type == 'dm') {
-                if (msg.content.startsWith('Spy Report on hex')) {
+            //EXECUTING DIFFRENTLY AFTER CHANNEL TYPE
+            switch (msg.channel.type) {
+                case 'text':
                     try {
-                        var station = lib.fnc.getStationInformation(msg.content);
-        
+                        //Checking if channel settings exist
+                        db.channel_settings(msg.guild.id, msg.channel.id).then((row) => {
+                            var station = 'error';
+
+                            //CHECKING IF ITS A SPY REPORT
+                            if (msg.content.startsWith('Spy Report on hex')) {
+                                station = lib.fnc.getStationInformation(msg.content); //Getting Station Info
+                            }
+
+                            if (row != 'error' && station != 'error') {
+                                switch (row.auto_category_enabled) {
+                                    case 1:
+                                        var found = false;
+                                        this.client.guilds.cache.get(msg.guild.id).channels.cache.forEach((channel) => {
+                                            if (channel.id == row.category_id && channel.type == 'category') found = true;
+                                        })
+                                        if (found) {
+
+                                        } else {
+                                            msg.guild.channels.create('Spy Reports', {type: 'category'}).then((category) => {
+                                                db.do('channel_settings', 'update', {
+                                                    server_id: row.server_id, 
+                                                    channel_id: row.channel_id, 
+                                                    starborne_server: row.starborne_server,
+                                                    auto_category_enabled: row.auto_category_enabled,
+                                                    category_id: category.id,
+                                                    deletion_timeout: row.deletion_timeout
+                                                });
+                                                
+                                                
+                                            });
+                                        }
+
+                                        break;
+                                    case 0:
+                                        let embed = lib.fnc.createReportEmbed(station, msg, this.client);
+                                        try {
+                                            msg.channel.send(embed);
+                                            if (msg.deletable) {
+                                                msg.delete();
+                                            }
+                                        }
+                                        catch (err) {
+                                            console.log(err);
+                                            console.log(station);
+                                        }
+                                        break
+                                }
+                            } else if (msg.channel.name != undefined && (msg.channel.name.includes('spy-data') || msg.channel.name.includes('spy-report')) && station != 'error') {
+                                let embed = lib.fnc.createReportEmbed(station, msg, this.client);
+                                try {
+                                    msg.channel.send(embed);
+                                    if (msg.deletable) {
+                                        msg.delete();
+                                    }
+                                }
+                                catch (err) {
+                                    console.log(err);
+                                    console.log(station);
+                                }
+                            }
+                        })
+                    }
+                    catch (err) {
+                        console.log(err);
+                    }
+                    break;
+                case 'dm':
+                    break;
+            }
+
+            let attach = msg.attachments.array()[0]
+            if (attach != undefined && attach.name == 'message.txt' && attach.size < 100000) {
+                download(attach.url, msg, (text, mobj) => {
+                    if (!text.startsWith('Spy Report on hex')) return;
+                    try {
+                        var station = lib.fnc.getStationInformation(text);
+
                         if (station != 'error') {
-                            msg.delete();
-                            let embed = lib.fnc.createReportEmbed(station, msg, this.client);
+                            let embed = lib.fnc.createReportEmbed(station, mobj, this.client);
                             try {
-                                msg.channel.send(embed);
+                                if (mobj.deletable) {
+                                    mobj.delete();
+                                }
+                                mobj.channel.send(embed);
                             }
                             catch (err) {
                                 console.log(err);
@@ -63,54 +145,8 @@ class DiscordBot {
                         console.log(err,"\n\n");
                     }
                     return;
-                }
-
-                let attach = msg.attachments.array()[0]
-                if (attach != undefined && attach.name == 'message.txt' && attach.size < 100000) {
-                    download(attach.url, msg, (text, mobj) => {
-                        if (!text.startsWith('Spy Report on hex')) return;
-                        try {
-                            var station = lib.fnc.getStationInformation(text);
-
-                            if (station != 'error') {
-                                let embed = lib.fnc.createReportEmbed(station, mobj, this.client);
-                                try {
-                                    if (mobj.deletable) {
-                                        mobj.delete();
-                                    }
-                                    mobj.channel.send(embed);
-                                }
-                                catch (err) {
-                                    console.log(err);
-                                    console.log(station);
-                                }
-                            }
-                        }
-                        catch (err) {
-                            console.log(err,"\n\n");
-                        }
-                        return;
-                    });
-                    return;
-                }
-        
-                for (var i=0;i<reports.length;i++) {
-                    if (msg.content.startsWith(reports[i].code)) {
-                        if (msg.content.includes('DEBUG')) console.log(reports[i].data);
-                        try {
-                            let embed = lib.fnc.createReportEmbed(reports[i].data, msg, this.client);
-                            msg.channel.send(embed)
-                        }
-                        catch (err) {
-                            console.log(err);
-                            console.log(station);
-                        }
-                        console.log(`[- | CODE] ${reports[i].code}`);
-                        reports.splice(i,1);
-                        msg.delete();
-                        return;
-                    }
-                }
+                });
+                return;
             }
         
             if (!(msg.content.startsWith(config.prefix))) return;
