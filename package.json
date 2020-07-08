@@ -1,17 +1,17 @@
 {
-  "name": "starborne-spyreport",
+  "name": "starborne-spy-report-bot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "MrMysterius",
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^7.1.0",
     "discord.js": "^12.2.0",
     "https": "^1.0.0",
-    "websocket": "^1.0.31"
+    "path": "^0.12.7"
   }
 }
