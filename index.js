@@ -12,10 +12,13 @@ const FunctionHandler = require('./lib/classes/FunctionHandler.js');
 global.functions = new FunctionHandler(require('./config/functions-directorys.json'));
 
 const Database = require('./lib/classes/Database.js');
-global.db = new Database('test').database;
+global.db = new Database('starborne-assistant').database;
 
 const DiscordBot = require('./lib/classes/DiscordBot.js');
 global.bot = new DiscordBot(require('./config/discord-bot.json'));
+
+const APIServer = require('./lib/classes/API.js');
+global.server = new APIServer(4000);
 
 setInterval(()=>{
     global.client = bot.client;
