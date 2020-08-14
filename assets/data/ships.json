@@ -1,0 +1,265 @@
+[
+    {
+        "name": "Corvette",
+        "type": "Raider",
+        "size": "Light",
+        "base_stats": {
+            "speed": "8",
+            "fp": "60",
+            "hp": "150",
+            "cargo": "10",
+            "scan": "0",
+            "bombing": "0"
+        },
+        "costs": {
+            "labor_cost": "1",
+            "metal": "100",
+            "gas": "60",
+            "crystal": "40",
+            "minutes": "5"
+        },
+        "level_bonus": {
+            "fp": "6",
+            "cargo": "2"
+        }
+    },
+    {
+        "name": "Patrol",
+        "type": "Assault",
+        "size": "Light",
+        "base_stats": {
+            "speed": "6",
+            "fp": "80",
+            "hp": "200",
+            "cargo": "5",
+            "scan": "0",
+            "bombing": "0"
+        },
+        "costs": {
+            "labor_cost": "1",
+            "metal": "75",
+            "gas": "50",
+            "crystal": "125",
+            "minutes": "7.30"
+        },
+        "level_bonus": {
+            "fp": "4",
+            "hp": "10"
+        }
+    },
+    {
+        "name": "Scout",
+        "type": "Exploration",
+        "size": "Light",
+        "base_stats": {
+            "speed": "8",
+            "fp": "70",
+            "hp": "175",
+            "cargo": "5",
+            "scan": "0.75",
+            "bombing": "0"
+        },
+        "costs": {
+            "labor_cost": "1",
+            "metal": "90",
+            "gas": "150",
+            "crystal": "60",
+            "minutes": "10"
+        },
+        "level_bonus": {
+            "fp": "3.5",
+            "hp": "8.75"
+        }
+    },
+    {
+        "name": "Industrial",
+        "type": "Utility",
+        "size": "Light",
+        "base_stats": {
+            "speed": "3",
+            "fp": "0",
+            "hp": "400",
+            "cargo": "100",
+            "scan": "0",
+            "bombing": "0"
+        },
+        "costs": {
+            "labor_cost": "2",
+            "metal": "200",
+            "gas": "200",
+            "crystal": "200",
+            "minutes": "16"
+        },
+        "level_bonus": {
+            "speed": "1"
+        }
+    },
+    {
+        "name": "Destroyer",
+        "type": "Raider",
+        "size": "Heavy",
+        "base_stats": {
+            "speed": "8",
+            "fp": "300",
+            "hp": "750",
+            "cargo": "40",
+            "scan": "0",
+            "bombing": "0"
+        },
+        "costs": {
+            "labor_cost": "3",
+            "metal": "550",
+            "gas": "330",
+            "crystal": "220",
+            "minutes": "16"
+        },
+        "level_bonus": {
+            "fp": "30",
+            "cargo": "8"
+        }
+    },
+    {
+        "name": "Frigate",
+        "type": "Assault",
+        "size": "Heavy",
+        "base_stats": {
+            "speed": "6",
+            "fp": "400",
+            "hp": "1000",
+            "cargo": "20",
+            "scan": "0",
+            "bombing": "0"
+        },
+        "costs": {
+            "labor_cost": "3",
+            "metal": "413",
+            "gas": "275",
+            "crystal": "688",
+            "minutes": "24"
+        },
+        "level_bonus": {
+            "fp": "20",
+            "hp": "50"
+        }
+    },
+    {
+        "name": "Recon",
+        "type": "Exploration",
+        "size": "Heavy",
+        "base_stats": {
+            "speed": "8",
+            "fp": "350",
+            "hp": "875",
+            "cargo": "20",
+            "scan": "1.5",
+            "bombing": "0"
+        },
+        "costs": {
+            "labor_cost": "3",
+            "metal": "495",
+            "gas": "825",
+            "crystal": "330",
+            "minutes": "32"
+        },
+        "level_bonus": {
+            "fp": "17.5",
+            "hp": "43.75"
+        }
+    },
+    {
+        "name": "Gunship",
+        "type": "Assault",
+        "size": "Heavy",
+        "base_stats": {
+            "speed": "5",
+            "fp": "400",
+            "hp": "1000",
+            "cargo": "10",
+            "scan": "0",
+            "bombing": "80"
+        },
+        "costs": {
+            "labor_cost": "6",
+            "metal": "1650",
+            "gas": "990",
+            "crystal": "660",
+            "minutes": "60"
+        },
+        "level_bonus": {
+            "fp": "20",
+            "hp": "50",
+            "bombing": "8"
+        }
+    },
+    {
+        "name": "Dreadnought",
+        "type": "Assault",
+        "size": "Capital",
+        "base_stats": {
+            "speed": "6",
+            "fp": "1800",
+            "hp": "4500",
+            "cargo": "50",
+            "scan": "0",
+            "bombing": "100"
+        },
+        "costs": {
+            "labor_cost": "9",
+            "metal": "2640",
+            "gas": "1760",
+            "crystal": "4400",
+            "minutes": "80"
+        },
+        "level_bonus": {
+            "fp": "180",
+            "bombing": "10"
+        }
+    },
+    {
+        "name": "Carrier",
+        "type": "Assault / Raider",
+        "size": "Capital",
+        "base_stats": {
+            "speed": "6",
+            "fp": "2000",
+            "hp": "5000",
+            "cargo": "100",
+            "scan": "0",
+            "bombing": "0"
+        },
+        "costs": {
+            "labor_cost": "9",
+            "metal": "4400",
+            "gas": "2640",
+            "crystal": "1760",
+            "minutes": "64"
+        },
+        "level_bonus": {
+            "fp": "100",
+            "hp": "250"
+        }
+    },
+    {
+        "name": "Troop Carrier",
+        "type": "Assault",
+        "size": "Heavy",
+        "base_stats": {
+            "speed": "3",
+            "fp": "400",
+            "hp": "1000",
+            "cargo": "100",
+            "scan": "0",
+            "bombing": "0"
+        },
+        "costs": {
+            "labor_cost": "200",
+            "metal": "250000",
+            "gas": "250000",
+            "crystal": "250000",
+            "minutes": "1440"
+        },
+        "level_bonus": {
+            "speed": 1
+        }
+    }
+]

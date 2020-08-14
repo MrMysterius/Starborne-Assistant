@@ -1,0 +1,11 @@
+#Node Modules
+node_modules/
+
+#Logs
+logs/
+
+#Config
+config/
+
+#Database
+database/
