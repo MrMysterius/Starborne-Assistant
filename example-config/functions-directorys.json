@@ -1,0 +1,18 @@
+[
+    {
+        "type": "relative",
+        "path": "lib/functions/database"
+    },
+    {
+        "type": "relative",
+        "path": "lib/functions/discordBot"
+    },
+    {
+        "type": "relative",
+        "path": "lib/functions/spy-reports"
+    },
+    {
+        "type": "relative",
+        "path": "lib/functions/logger"
+    }
+]

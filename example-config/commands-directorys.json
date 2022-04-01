@@ -1,0 +1,10 @@
+[
+    {
+        "type": "relative",
+        "path": "lib/commands/admin-commands"
+    },
+    {
+        "type": "relative",
+        "path": "lib/commands/user-commands"
+    }
+]
